@@ -1,0 +1,12 @@
+# Giữ xuống dòng kiểu Linux cho script và cấu hình,
+# để script không lỗi khi có người sửa file trên Windows.
+* text=auto
+*.sh   text eol=lf
+*.py   text eol=lf
+*.conf text eol=lf
+
+*.docx binary
+*.pptx binary
+*.pcap binary
+*.pcapng binary
+*.png  binary

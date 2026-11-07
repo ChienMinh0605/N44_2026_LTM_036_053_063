@@ -1,0 +1,24 @@
+# Build C++
+build/
+cmake-build-*/
+*.o
+*.a
+*.so
+*.exe
+
+# Broker: dữ liệu lưu phiên và file mật khẩu sinh ra khi chạy
+mosquitto/data/*
+!mosquitto/data/.gitkeep
+mosquitto/config/passwd
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# Editor / hệ điều hành
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+~$*.docx
