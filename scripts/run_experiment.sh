@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Chạy một lần đo của thí nghiệm E (bạn B viết tiếp).
+# Chạy một lần đo của thí nghiệm E (Nhật viết tiếp).
 #   Cách dùng: ./scripts/run_experiment.sh <N0|N1|N2|N3> <qos 0|1> <run>
 set -euo pipefail
 cd "$(dirname "$0")/.."

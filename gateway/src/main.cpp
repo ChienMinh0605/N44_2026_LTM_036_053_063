@@ -3,8 +3,8 @@
 //
 // Chia việc:
 //   - Nửa MAVSDK (đọc telemetry, timer 200 ms): người có máy chạy PX4.
-//   - Nửa MQTT (Paho, bộ đệm, Last Will, sent.csv, events.csv): bạn A,
-//     viết trong common/ để Logger dùng lại.
+//   - Nửa MQTT (Paho, bộ đệm, Last Will, sent.csv, events.csv): Chiến,
+//     đã xong trong common/mqtt_link để Logger dùng lại.
 
 #include <iostream>
 
