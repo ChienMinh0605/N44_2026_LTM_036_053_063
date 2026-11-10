@@ -28,7 +28,7 @@ Kế hoạch chi tiết (quy ước topic, JSON, thí nghiệm): [docs/Ke_hoach_
 Cả 3 máy:
 
 ```bash
-sudo apt install build-essential cmake git iproute2 nlohmann-json3-dev libpaho-mqtt-dev libpaho-mqttpp-dev docker.io
+sudo apt install build-essential cmake git iproute2 nlohmann-json3-dev libpaho-mqtt-dev libpaho-mqttpp-dev libssl-dev mosquitto-clients docker.io
 sudo usermod -aG docker $USER   # đăng xuất rồi vào lại để dùng docker không cần sudo
 ```
 
