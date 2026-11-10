@@ -20,14 +20,13 @@ int main(int argc, char** argv) {
             << " buffer=" << (opt.buffer ? "on" : "off") << " scenario=" << opt.scenario
             << " run=" << opt.run << "\n";
 
-  // TODO (MQTT) Tạo mqtt::async_client tới kBrokerUri với kGatewayClientId:
-  //   - create_options: send_while_disconnected = opt.buffer,
-  //     max_buffered_messages = kMaxBufferedMessages, delete_oldest_messages = true
-  //   - connect_options: user/password, keep-alive kKeepAliveSec,
-  //     automatic reconnect kReconnectMinSec..kReconnectMaxSec, MQTT 3.1.1
-  //   - Last Will: topic kTopicStatus, status_payload(false), retained
-  //   - callback connected: publish status_payload(true) retained; ghi events.csv
-  //   - callback connection_lost: ghi events.csv
+  // TODO (MQTT) Dùng px4mqtt::MqttLink (common/include/common/mqtt_link.hpp, có ví dụ ở đầu file).
+  //   Phần kết nối, bộ đệm, tự kết nối lại, Last Will, events.csv đã có sẵn trong đó:
+  //   - LinkOptions: client_id = kGatewayClientId, buffer_offline = opt.buffer,
+  //     will_topic = kTopicStatus, will_payload = status_payload(false),
+  //     events_csv = opt.out_dir + "/events.csv"
+  //   - on_connected: publish status_payload(true), QoS 1, retained
+  //   - connect() rồi mới vào vòng lặp phát
 
   // TODO (MAVSDK) Nếu opt.source == "px4":
   //   - Mavsdk, add_any_connection(kMavlinkUrl), chờ có system
