@@ -14,13 +14,13 @@ Kế hoạch chi tiết (quy ước topic, JSON, thí nghiệm): [docs/Ke_hoach_
 
 | Thư mục | Nội dung | Phụ trách |
 |---|---|---|
-| `common/` | Hằng số chung (`config.hpp`), định dạng JSON (`message.hpp`), tham số dòng lệnh, phần MQTT dùng chung | A |
-| `gateway/` | PX4 → JSON → MQTT | Nửa MQTT: A · Nửa MAVSDK: người có máy chạy PX4 |
-| `logger/` | Subscribe và ghi CSV | A |
-| `app/` | App Flutter | C |
-| `scripts/` | Dựng Broker, netem, chạy thí nghiệm, phân tích | A (Broker), B (thí nghiệm, phân tích) |
-| `mosquitto/` | Cấu hình Broker | A |
-| `data/` | CSV, PCAP, biểu đồ kết quả | B |
+| `common/` | Hằng số chung (`config.hpp`), định dạng JSON (`message.hpp`), tham số dòng lệnh, phần MQTT dùng chung | Chiến |
+| `gateway/` | PX4 → JSON → MQTT | Nửa MQTT: Chiến · Nửa MAVSDK: người có máy chạy PX4 |
+| `logger/` | Subscribe và ghi CSV | Chiến |
+| `app/` | App Flutter | Tiên |
+| `scripts/` | Dựng Broker, netem, chạy thí nghiệm, phân tích | Chiến (Broker, netem), Nhật (thí nghiệm, phân tích) |
+| `mosquitto/` | Cấu hình Broker | Chiến |
+| `data/` | CSV, PCAP, biểu đồ kết quả | Nhật |
 | `docs/` | Kế hoạch, báo cáo, slide | Cả nhóm |
 
 ## Cài đặt (Ubuntu 22.04 / WSL2)

@@ -1,4 +1,4 @@
-"""Phân tích số liệu thí nghiệm (bạn B viết tiếp).
+"""Phân tích số liệu thí nghiệm (Nhật viết tiếp).
 
 Đầu vào mỗi lần chạy (xem data/README.md):
   - sent.csv của Gateway: boot_id, topic, seq, qos, timestamp_ms, trạng thái

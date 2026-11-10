@@ -1,4 +1,4 @@
-# App Flutter (bạn C)
+# App Flutter (Tiên)
 
 Tạo project ngay trong thư mục này:
 
