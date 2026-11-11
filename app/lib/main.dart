@@ -45,6 +45,14 @@ class _HomePageState extends State<HomePage> {
     'battery': '-',
   };
 
+  // Số tin đã nhận của từng topic (thí nghiệm B)
+  final counts = {
+    'position': 0,
+    'altitude': 0,
+    'velocity': 0,
+    'battery': 0,
+  };
+
   // Topic nào đang được chọn nhận (thí nghiệm B: chỉ tích Pin)
   final selected = {
     'position': true,
@@ -162,7 +170,10 @@ class _HomePageState extends State<HomePage> {
         if (name == 'status') {
           gateway = data['state'];
           gatewayTime = timeNow();
-        } else if (selected[name] == true) {
+        } else if (counts.containsKey(name)) {
+          // Không lọc theo ô tích: Broker gửi tin nào tới thì đếm tin đó.
+          // Bỏ tích mà số đếm đứng yên => Broker đã thật sự ngừng gửi.
+          counts[name] = counts[name]! + 1;
           values[name] = formatValue(name, data['value']);
           dataTime = timeNow();
         }
@@ -232,10 +243,19 @@ class _HomePageState extends State<HomePage> {
           CheckboxListTile(
             title: Text('${labels[name]}: ${values[name]}',
                 style: const TextStyle(fontSize: 18)),
+            subtitle: Text('Đã nhận: ${counts[name]} tin'),
             value: selected[name],
             onChanged: (value) => selectTopic(name, value!),
           ),
         Text('Cập nhật lúc: $dataTime'),
+        TextButton(
+          onPressed: () => setState(() {
+            for (final name in counts.keys) {
+              counts[name] = 0;
+            }
+          }),
+          child: const Text('Đặt lại bộ đếm'),
+        ),
         const Divider(),
         ElevatedButton(onPressed: disconnect, child: const Text('Ngắt kết nối')),
       ],
