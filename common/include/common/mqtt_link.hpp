@@ -82,7 +82,9 @@ class MqttLink {
 
   // Kết nối lần đầu. Chặn cho tới khi kết nối được: Broker chưa chạy thì thử lại
   // theo nhịp 1, 2, 4, 8, 8... giây. Sau lần đầu, Paho tự lo việc kết nối lại.
-  void connect();
+  // should_stop: hàm trả về true khi người dùng bấm Ctrl+C, để thoát khỏi vòng chờ.
+  // Trả về false nếu bị dừng trước khi kết nối được.
+  bool connect(const std::function<bool()>& should_stop = nullptr);
 
   // Gửi một bản tin. Không chờ PUBACK; trả về trạng thái để ghi sent.csv.
   SendStatus publish(const std::string& topic, const std::string& payload, int qos,

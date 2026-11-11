@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
     o.client_id = kLoggerClientId;
     o.clean_session = true;
     MqttLink link(o);
-    link.connect();
+    if (!link.connect([] { return g_stop.load(); })) return 1;
     link.disconnect();
     std::cout << "Da xoa phien cu cua " << kLoggerClientId << "\n";
     return 0;
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 
   std::cout << "Logger qos=" << opt.qos << " scenario=" << opt.scenario << " run=" << opt.run
             << " -> " << opt.out_dir << "/logger.csv\n";
-  link.connect();
+  if (!link.connect([] { return g_stop.load(); })) return 1;  // Ctrl+C khi Broker chưa chạy
 
   // Luồng chính chỉ chờ Ctrl+C, cứ 5 giây in số tin đã nhận để biết Logger còn chạy.
   long last = 0;

@@ -41,9 +41,15 @@ Ubuntu 22.04 trên trang Releases của github.com/mavlink/MAVSDK, cài bằng `
 ## Build
 
 ```bash
-cmake -B build                       # máy có MAVSDK
-cmake -B build -DBUILD_GATEWAY=OFF   # máy không có MAVSDK: chỉ build common + logger
+cmake -B build
 cmake --build build -j
+```
+
+Máy không cài MAVSDK vẫn build được Gateway, chỉ chạy được `--source fake` (dữ liệu giả,
+đủ cho mọi thí nghiệm). Máy có MAVSDK thì chạy được thêm `--source px4`.
+
+```bash
+./build/gateway/gateway --source fake --qos 1 --out data/thu   # chạy thử, Ctrl+C để dừng
 ```
 
 ## Chạy

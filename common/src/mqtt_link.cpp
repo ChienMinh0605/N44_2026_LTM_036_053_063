@@ -141,24 +141,29 @@ void MqttLink::on_message(std::function<void(const ReceivedMessage&)> fn) {
   impl_->user_message = std::move(fn);
 }
 
-void MqttLink::connect() {
+bool MqttLink::connect(const std::function<bool()>& should_stop) {
   // Paho chỉ tự kết nối lại SAU khi đã kết nối thành công một lần, nên lần đầu tự thử lại ở đây.
+  auto stopped = [&] { return should_stop && should_stop(); };
   int wait = kReconnectMinSec;
-  while (true) {
+  while (!stopped()) {
     try {
       impl_->log_event("connect_attempt", kBrokerUri);
       auto tok = impl_->client.connect(impl_->conn_opts);
       // Chờ có giới hạn: nếu token không bao giờ hoàn tất thì vẫn không treo vô hạn.
       tok->wait_for(std::chrono::seconds(8));
-      if (impl_->client.is_connected()) return;  // callback connected đã ghi events.csv
+      if (impl_->client.is_connected()) return true;  // callback connected đã ghi events.csv
       impl_->log_event("connect_failed", "het thoi gian cho");
     } catch (const mqtt::exception& e) {
       impl_->log_event("connect_failed", e.what());
     }
-    if (impl_->client.is_connected()) return;  // Paho có thể đã tự kết nối được trong lúc chờ
-    std::this_thread::sleep_for(std::chrono::seconds(wait));
+    if (impl_->client.is_connected()) return true;  // Paho có thể đã tự kết nối được trong lúc chờ
+    // Chờ theo từng bước 100 ms để Ctrl+C có tác dụng ngay, không phải đợi hết 8 giây.
+    for (int i = 0; i < wait * 10 && !stopped(); ++i)
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
     wait = std::min(wait * 2, kReconnectMaxSec);
   }
+  impl_->log_event("connect_cancelled", "");
+  return false;
 }
 
 SendStatus MqttLink::publish(const std::string& topic, const std::string& payload, int qos,

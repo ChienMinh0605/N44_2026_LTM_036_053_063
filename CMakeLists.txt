@@ -5,9 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Máy không cài MAVSDK (không chạy PX4) thì build với -DBUILD_GATEWAY=OFF,
-# vẫn build được common và logger.
-option(BUILD_GATEWAY "Build Gateway (cần MAVSDK)" ON)
+option(BUILD_GATEWAY "Build Gateway" ON)
 
 find_package(nlohmann_json 3 REQUIRED)
 find_package(PahoMqttCpp REQUIRED)
@@ -27,6 +25,13 @@ add_subdirectory(common)
 add_subdirectory(logger)
 
 if(BUILD_GATEWAY)
-  find_package(MAVSDK REQUIRED)
+  # MAVSDK không bắt buộc: máy không cài vẫn build được Gateway, chỉ thiếu --source px4
+  # (vẫn chạy được --source fake, đủ cho mọi thí nghiệm).
+  find_package(MAVSDK QUIET)
+  if(MAVSDK_FOUND)
+    message(STATUS "Tìm thấy MAVSDK: Gateway hỗ trợ --source px4")
+  else()
+    message(STATUS "Không có MAVSDK: Gateway chỉ hỗ trợ --source fake")
+  endif()
   add_subdirectory(gateway)
 endif()
