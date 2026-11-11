@@ -18,11 +18,15 @@ fi
 if docker container inspect broker >/dev/null 2>&1; then
   docker start broker >/dev/null
 else
-  docker run -d --name broker --network mqttnet --ip 172.28.0.10 -p 1883:1883 \
+  docker run -d --name broker --restart unless-stopped --network mqttnet --ip 172.28.0.10 -p 1883:1883 \
     -v "$PWD/mosquitto/config:/mosquitto/config" \
     -v "$PWD/mosquitto/data:/mosquitto/data" \
     eclipse-mosquitto:2 >/dev/null
 fi
+
+# Tự bật lại Broker khi khởi động lại máy. "unless-stopped": nếu chính mình
+# docker stop (thí nghiệm C) thì Broker vẫn tắt cho tới khi docker start.
+docker update --restart unless-stopped broker >/dev/null
 
 # Tạo/cập nhật tài khoản bên trong container, trả quyền file cho user mosquitto
 # rồi khởi động lại để Broker đọc file mật khẩu mới.
