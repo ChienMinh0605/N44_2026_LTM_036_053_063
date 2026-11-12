@@ -1,11 +1,26 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 void main() {
-  runApp(const MaterialApp(home: HomePage()));
+  // Khi Broker tắt đột ngột, thư viện mqtt_client có thể ném lỗi mạng
+  // (SocketException...) ở bên trong nó. runZonedGuarded bắt các lỗi đó
+  // để log không hiện "Unhandled Exception". App vẫn tự kết nối lại
+  // nhờ autoReconnect.
+  runZonedGuarded(() {
+    WidgetsFlutterBinding.ensureInitialized();
+    runApp(const MaterialApp(home: HomePage()));
+  }, (error, stack) {
+    if (error is SocketException || error is ConnectionException) {
+      debugPrint('Mất kết nối Broker, đang thử lại...');
+    } else {
+      debugPrint('Lỗi: $error');
+    }
+  });
 }
 
 class HomePage extends StatefulWidget {
@@ -245,7 +260,8 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(fontSize: 18)),
             subtitle: Text('Đã nhận: ${counts[name]} tin'),
             value: selected[name],
-            onChanged: (value) => selectTopic(name, value!),
+            // Đang mất kết nối thì khoá ô tích (không subscribe được)
+            onChanged: connected ? (value) => selectTopic(name, value!) : null,
           ),
         Text('Cập nhật lúc: $dataTime'),
         TextButton(
