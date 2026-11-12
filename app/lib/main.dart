@@ -7,21 +7,22 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 void main() {
-  // Khi Broker tắt đột ngột, thư viện mqtt_client ném SocketException
-  // ("Connection reset by peer") mà không ai bắt. App vẫn chạy và vẫn tự kết nối
-  // lại, nhưng log hiện dòng đỏ "Unhandled Exception" trông như app bị lỗi.
-  // runZonedGuarded bắt các lỗi đó: lỗi mạng thì ghi một dòng ngắn,
-  // lỗi khác vẫn in đầy đủ để không che mất lỗi thật.
-  runZonedGuarded(
-    () => runApp(const MaterialApp(home: HomePage())),
-    (error, stack) {
-      if (error is SocketException) {
-        debugPrint('Mất kết nối Broker, đang thử lại: ${error.message}');
-      } else {
-        debugPrint('Lỗi chưa xử lý: $error\n$stack');
-      }
-    },
-  );
+void main() {
+  // Khi Broker tắt đột ngột, thư viện mqtt_client có thể ném lỗi mạng
+  // (SocketException, ConnectionException) ở bên trong nó. runZonedGuarded bắt các lỗi đó
+  // để log không hiện "Unhandled Exception". App vẫn tự kết nối lại nhờ autoReconnect.
+  // Lỗi khác vẫn in đầy đủ (kèm vị trí lỗi) để không che mất lỗi thật.
+  runZonedGuarded(() {
+    WidgetsFlutterBinding.ensureInitialized();
+    runApp(const MaterialApp(home: HomePage()));
+  }, (error, stack) {
+    if (error is SocketException || error is ConnectionException) {
+      debugPrint('Mất kết nối Broker, đang thử lại...');
+    } else {
+      debugPrint('Lỗi chưa xử lý: $error\n$stack');
+    }
+  });
+}
 }
 
 class HomePage extends StatefulWidget {
@@ -261,7 +262,8 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(fontSize: 18)),
             subtitle: Text('Đã nhận: ${counts[name]} tin'),
             value: selected[name],
-            onChanged: (value) => selectTopic(name, value!),
+            // Đang mất kết nối thì khoá ô tích (không subscribe được)
+            onChanged: connected ? (value) => selectTopic(name, value!) : null,
           ),
         Text('Cập nhật lúc: $dataTime'),
         TextButton(
