@@ -7,7 +7,6 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 void main() {
-void main() {
   // Khi Broker tắt đột ngột, thư viện mqtt_client có thể ném lỗi mạng
   // (SocketException, ConnectionException) ở bên trong nó. runZonedGuarded bắt các lỗi đó
   // để log không hiện "Unhandled Exception". App vẫn tự kết nối lại nhờ autoReconnect.
@@ -22,7 +21,6 @@ void main() {
       debugPrint('Lỗi chưa xử lý: $error\n$stack');
     }
   });
-}
 }
 
 class HomePage extends StatefulWidget {
