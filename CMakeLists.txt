@@ -35,3 +35,6 @@ if(BUILD_GATEWAY)
   endif()
   add_subdirectory(gateway)
 endif()
+
+# Cong cu phan B (khong sua Gateway / Logger)
+add_subdirectory(scripts)

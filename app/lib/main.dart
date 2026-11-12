@@ -7,10 +7,11 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 void main() {
+void main() {
   // Khi Broker tắt đột ngột, thư viện mqtt_client có thể ném lỗi mạng
-  // (SocketException...) ở bên trong nó. runZonedGuarded bắt các lỗi đó
-  // để log không hiện "Unhandled Exception". App vẫn tự kết nối lại
-  // nhờ autoReconnect.
+  // (SocketException, ConnectionException) ở bên trong nó. runZonedGuarded bắt các lỗi đó
+  // để log không hiện "Unhandled Exception". App vẫn tự kết nối lại nhờ autoReconnect.
+  // Lỗi khác vẫn in đầy đủ (kèm vị trí lỗi) để không che mất lỗi thật.
   runZonedGuarded(() {
     WidgetsFlutterBinding.ensureInitialized();
     runApp(const MaterialApp(home: HomePage()));
@@ -18,9 +19,10 @@ void main() {
     if (error is SocketException || error is ConnectionException) {
       debugPrint('Mất kết nối Broker, đang thử lại...');
     } else {
-      debugPrint('Lỗi: $error');
+      debugPrint('Lỗi chưa xử lý: $error\n$stack');
     }
   });
+}
 }
 
 class HomePage extends StatefulWidget {
