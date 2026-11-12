@@ -1,11 +1,27 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 void main() {
-  runApp(const MaterialApp(home: HomePage()));
+  // Khi Broker tắt đột ngột, thư viện mqtt_client ném SocketException
+  // ("Connection reset by peer") mà không ai bắt. App vẫn chạy và vẫn tự kết nối
+  // lại, nhưng log hiện dòng đỏ "Unhandled Exception" trông như app bị lỗi.
+  // runZonedGuarded bắt các lỗi đó: lỗi mạng thì ghi một dòng ngắn,
+  // lỗi khác vẫn in đầy đủ để không che mất lỗi thật.
+  runZonedGuarded(
+    () => runApp(const MaterialApp(home: HomePage())),
+    (error, stack) {
+      if (error is SocketException) {
+        debugPrint('Mất kết nối Broker, đang thử lại: ${error.message}');
+      } else {
+        debugPrint('Lỗi chưa xử lý: $error\n$stack');
+      }
+    },
+  );
 }
 
 class HomePage extends StatefulWidget {
