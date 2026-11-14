@@ -31,6 +31,18 @@ inline constexpr int kReconnectMinSec = 1;
 inline constexpr int kReconnectMaxSec = 8;
 inline constexpr int kMaxBufferedMessages = 1000;
 
+// Kênh lệnh điều khiển (docs/command_channel.md)
+//   drone/001/cmd      : chiều xuống, người điều khiển -> Gateway
+//   drone/001/cmd/ack  : chiều lên, Gateway trả kết quả từng lệnh
+inline constexpr const char* kTopicCmd = "drone/001/cmd";
+inline constexpr const char* kTopicCmdAck = "drone/001/cmd/ack";
+// Lệnh không ghi ttl_ms thì dùng hạn này. Quá hạn thì Gateway từ chối, để lệnh
+// bị Broker giữ lại trong lúc mất kết nối không bị thực hiện muộn.
+inline constexpr int kCmdDefaultTtlMs = 3000;
+// Quyền điều khiển: người gửi lệnh đầu tiên giữ quyền; không gửi gì trong khoảng này
+// thì quyền được nhả cho người khác (giống "proof of life" của PX4 Offboard).
+inline constexpr int kCmdLeaseMs = 5000;
+
 // MAVSDK bản mới dùng udpin://, bản cũ dùng udp://:14540
 inline constexpr const char* kMavlinkUrl = "udpin://0.0.0.0:14540";
 

@@ -4,6 +4,7 @@
 //   - Px4Source  (px4_source.cpp): đọc MAVLink qua MAVSDK. Chỉ có khi build với MAVSDK.
 #pragma once
 
+#include <cmath>
 #include <memory>
 #include <string>
 
@@ -19,6 +20,15 @@ struct TelemetrySnapshot {
   bool valid = false;        // false: chưa nhận được dữ liệu nào
 };
 
+// Một lệnh điều khiển đã qua các kiểm tra an toàn của Gateway (command_handler).
+// Trường nào không có trong JSON thì để NaN.
+struct DroneCommand {
+  std::string action;  // takeoff | land | rtl | goto | hold
+  double alt = NAN;    // mét so với điểm cất cánh (takeoff, goto)
+  double lat = NAN;    // độ (goto)
+  double lon = NAN;    // độ (goto)
+};
+
 class TelemetrySource {
  public:
   virtual ~TelemetrySource() = default;
@@ -26,6 +36,9 @@ class TelemetrySource {
   virtual bool start() = 0;
   // Giá trị mới nhất. Gọi từ luồng của vòng lặp phát, nên phải an toàn đa luồng.
   virtual TelemetrySnapshot latest() = 0;
+  // Thực hiện lệnh. Trả về chuỗi rỗng nếu chấp nhận, ngược lại là lý do từ chối
+  // (ví dụ "invalid_state", "out_of_range"). Gọi từ luồng xử lý lệnh.
+  virtual std::string execute(const DroneCommand&) { return "not_supported"; }
 };
 
 std::unique_ptr<TelemetrySource> make_fake_source();

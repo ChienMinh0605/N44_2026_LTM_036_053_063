@@ -12,11 +12,20 @@ if ! docker network inspect mqttnet >/dev/null 2>&1; then
   docker network create --subnet 172.28.0.0/24 mqttnet
 fi
 
-# Mosquitto cần file mật khẩu tồn tại (có thể rỗng) để khởi động.
+# Chuẩn bị file mật khẩu và quyền thư mục dữ liệu TRƯỚC khi khởi động Broker,
+# bằng một container tạm (chạy quyền root bên trong): tạo/cập nhật tài khoản,
+# rồi trả quyền cho user mosquitto. Cần làm vậy vì khi chép repo sang máy khác,
+# các file này thuộc user của máy mới và Mosquitto không đọc được, nên không khởi động nổi.
 [ -e mosquitto/config/passwd ] || touch mosquitto/config/passwd
+docker run --rm --entrypoint sh \
+  -v "$PWD/mosquitto/config:/mosquitto/config" \
+  -v "$PWD/mosquitto/data:/mosquitto/data" \
+  eclipse-mosquitto:2 -c "mosquitto_passwd -b /mosquitto/config/passwd '$MQTT_USER' '$MQTT_PASS' \
+    && chown mosquitto:mosquitto /mosquitto/config/passwd && chmod 0600 /mosquitto/config/passwd \
+    && chown -R mosquitto:mosquitto /mosquitto/data"
 
 if docker container inspect broker >/dev/null 2>&1; then
-  docker start broker >/dev/null
+  docker restart broker >/dev/null  # đọc lại file mật khẩu mới
 else
   docker run -d --name broker --restart unless-stopped --network mqttnet --ip 172.28.0.10 -p 1883:1883 \
     -v "$PWD/mosquitto/config:/mosquitto/config" \
@@ -27,13 +36,6 @@ fi
 # Tự bật lại Broker khi khởi động lại máy. "unless-stopped": nếu chính mình
 # docker stop (thí nghiệm C) thì Broker vẫn tắt cho tới khi docker start.
 docker update --restart unless-stopped broker >/dev/null
-
-# Tạo/cập nhật tài khoản bên trong container, trả quyền file cho user mosquitto
-# rồi khởi động lại để Broker đọc file mật khẩu mới.
-docker exec broker mosquitto_passwd -b /mosquitto/config/passwd "$MQTT_USER" "$MQTT_PASS"
-docker exec broker chown mosquitto:mosquitto /mosquitto/config/passwd
-docker exec broker chmod 0600 /mosquitto/config/passwd
-docker restart broker >/dev/null
 
 echo "Broker đang chạy ở 172.28.0.10:1883, tài khoản: $MQTT_USER"
 echo "Thử nhận tin:  docker exec broker mosquitto_sub -u $MQTT_USER -P $MQTT_PASS -v -t 'drone/#'"

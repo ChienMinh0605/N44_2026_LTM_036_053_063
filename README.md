@@ -59,6 +59,7 @@ Máy không cài MAVSDK vẫn build được Gateway, chỉ chạy được `--s
 ./build/logger/logger --qos 1
 ./build/gateway/gateway --source px4 --qos 1   # hoặc --source fake nếu không có PX4
 ./scripts/netem.sh N1                # đặt điều kiện mạng: N0 | N1 | N2 | N3 | show
+./build/commander/commander --action takeoff --alt 15   # gửi lệnh điều khiển, xem docs/command_channel.md
 ```
 
 ## Quy tắc làm việc với Git
