@@ -7,6 +7,10 @@
 // Ctrl+C: publish "offline" (retained) rồi mới ngắt, vì ngắt đúng cách thì Broker
 // không phát Last Will.
 //
+// Kênh lệnh: Gateway subscribe drone/001/cmd, cho từng lệnh qua 4 kiểm tra an toàn
+// (command_handler.cpp), chuyển lệnh hợp lệ cho drone, trả kết quả lên drone/001/cmd/ack
+// và ghi cmd_log.csv. Lệnh được xử lý trên một luồng riêng, không trong callback của Paho.
+//
 // Chia việc:
 //   - Nguồn PX4 (px4_source.cpp): người có máy chạy PX4.
 //   - Phần MQTT: common/mqtt_link (Chiến). Vòng lặp phát và nguồn giả: file này, fake_source.cpp.
@@ -14,9 +18,12 @@
 #include <array>
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <csignal>
+#include <deque>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <thread>
 
 #include "common/config.hpp"
@@ -24,6 +31,7 @@
 #include "common/message.hpp"
 #include "common/mqtt_link.hpp"
 #include "common/options.hpp"
+#include "command_handler.hpp"
 #include "telemetry_source.hpp"
 
 namespace {
@@ -58,16 +66,69 @@ int main(int argc, char** argv) {
   lo.will_topic = kTopicStatus;
   lo.will_payload = status_payload(false);
   lo.events_csv = opt.out_dir + "/events.csv";
+  lo.subscribe_filter = kTopicCmd;  // nhận lệnh điều khiển
+  lo.subscribe_qos = 1;             // QoS hiệu lực = QoS người gửi chọn (tối đa 1)
   MqttLink link(lo);
+
+  // 2b. Kênh lệnh: callback của Paho chỉ ghi nhận giờ nhận rồi xếp hàng;
+  // luồng cmd_worker kiểm tra, thực hiện và trả ack.
+  struct PendingCmd {
+    std::string payload;
+    int64_t recv_ms;
+    bool retained, dup;
+  };
+  std::mutex cmd_mu;
+  std::condition_variable cmd_cv;
+  std::deque<PendingCmd> cmd_queue;
+  bool cmd_stop = false;
+  link.on_message([&](const ReceivedMessage& m) {
+    const int64_t recv = now_ms();  // lấy giờ ngay khi nhận, trước mọi xử lý
+    if (m.payload.empty()) return;  // tin rỗng = lệnh xoá tin retained, không phải lệnh
+    {
+      std::lock_guard<std::mutex> lk(cmd_mu);
+      cmd_queue.push_back({m.payload, recv, m.retained, m.duplicate});
+    }
+    cmd_cv.notify_one();
+  });
+  CommandHandler handler(opt.cmd_safety, *source);
+  CsvWriter cmd_log(opt.out_dir + "/cmd_log.csv", CommandHandler::kLogHeader);
+  std::thread cmd_worker([&] {
+    std::unique_lock<std::mutex> lk(cmd_mu);
+    while (true) {
+      cmd_cv.wait(lk, [&] { return cmd_stop || !cmd_queue.empty(); });
+      if (cmd_queue.empty()) return;  // cmd_stop và đã xử lý hết
+      PendingCmd c = std::move(cmd_queue.front());
+      cmd_queue.pop_front();
+      lk.unlock();
+      CommandOutcome out = handler.handle(c.payload, c.recv_ms, c.retained, c.dup);
+      out.ack["ack_ms"] = now_ms();
+      link.publish(kTopicCmdAck, out.ack.dump(), 1, false);
+      cmd_log.write_line(out.log_line);
+      std::cout << "lenh: " << out.log_line << "\n";
+      lk.lock();
+    }
+  });
   // Chạy sau MỖI lần kết nối (cả lần đầu và sau khi kết nối lại).
   link.on_connected([&] { link.publish(kTopicStatus, status_payload(true), 1, true); });
 
   CsvWriter sent(opt.out_dir + "/sent.csv", "boot_id,topic,seq,qos,timestamp_ms,status");
 
   std::cout << "Gateway boot_id=" << boot_id << " source=" << opt.source << " qos=" << opt.qos
-            << " buffer=" << (opt.buffer ? "on" : "off") << " scenario=" << opt.scenario
+            << " buffer=" << (opt.buffer ? "on" : "off")
+            << " cmd-safety=" << (opt.cmd_safety ? "on" : "off") << " scenario=" << opt.scenario
             << " run=" << opt.run << " -> " << opt.out_dir << "\n";
-  if (!link.connect([] { return g_stop.load(); })) return 1;  // Ctrl+C khi Broker chưa chạy
+  auto stop_worker = [&] {
+    {
+      std::lock_guard<std::mutex> lk(cmd_mu);
+      cmd_stop = true;
+    }
+    cmd_cv.notify_one();
+    cmd_worker.join();
+  };
+  if (!link.connect([] { return g_stop.load(); })) {  // Ctrl+C khi Broker chưa chạy
+    stop_worker();
+    return 1;
+  }
 
   // 3. Vòng lặp phát: đúng nhịp 200 ms, dùng mốc thời gian tuyệt đối để không bị trôi nhịp.
   const std::array<const char*, 4> topics = {kTopicPosition, kTopicAltitude, kTopicVelocity,
@@ -115,6 +176,7 @@ int main(int argc, char** argv) {
 
   // 4. Tắt êm: tự báo offline, chờ gửi xong rồi DISCONNECT.
   std::cout << "Dang dung Gateway...\n";
+  stop_worker();  // xử lý nốt các lệnh đã nhận rồi mới ngắt
   link.publish(kTopicStatus, status_payload(false), 1, true);
   link.disconnect();
   std::cout << "Tong: sent=" << count["sent"] << " buffered=" << count["buffered"]

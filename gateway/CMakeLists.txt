@@ -2,6 +2,7 @@ add_executable(gateway
   src/main.cpp
   src/fake_source.cpp
   src/px4_source.cpp
+  src/command_handler.cpp
 )
 target_link_libraries(gateway PRIVATE px4mqtt_common)
 

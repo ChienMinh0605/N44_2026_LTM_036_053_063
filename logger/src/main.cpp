@@ -62,6 +62,8 @@ int main(int argc, char** argv) {
       std::cout << "status: " << m.payload << (m.retained ? " (retained)" : "") << "\n";
       return;  // status không phải telemetry, không tính vào số liệu
     }
+    // Lệnh và ack (drone/001/cmd, drone/001/cmd/ack) cũng không phải telemetry.
+    if (m.topic.rfind(kTopicCmd, 0) == 0) return;
     try {
       const Telemetry t = from_payload(m.payload);
       csv.write_line(std::to_string(recv) + "," + m.topic + "," + std::to_string(t.boot_id) + "," +

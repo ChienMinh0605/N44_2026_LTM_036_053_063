@@ -4,6 +4,7 @@
 //   --source px4|fake   (Gateway) lấy dữ liệu từ PX4 hay sinh dữ liệu giả
 //   --qos 0|1           mức QoS khi publish / subscribe
 //   --buffer on|off     (Gateway) bật/tắt bộ đệm khi mất kết nối
+//   --cmd-safety on|off (Gateway) bật/tắt 4 kiểm tra an toàn của kênh lệnh (tắt chỉ để làm thí nghiệm H)
 //   --clean             (Logger) chỉ kết nối với clean_session = true để xóa phiên cũ rồi thoát
 //   --scenario N0..N3   tên điều kiện mạng, ghi vào CSV
 //   --run <số>          lần chạy thứ mấy, ghi vào CSV
@@ -20,6 +21,7 @@ struct Options {
   std::string source = "px4";
   int qos = 1;
   bool buffer = true;
+  bool cmd_safety = true;
   bool clean = false;
   std::string scenario = "N0";
   int run = 1;
@@ -28,7 +30,7 @@ struct Options {
 
 inline void print_usage(const char* prog) {
   std::cerr << "Cach dung: " << prog
-            << " [--source px4|fake] [--qos 0|1] [--buffer on|off] [--clean]"
+            << " [--source px4|fake] [--qos 0|1] [--buffer on|off] [--cmd-safety on|off] [--clean]"
                " [--scenario N0] [--run 1] [--out data]\n";
 }
 
@@ -50,6 +52,8 @@ inline Options parse_options(int argc, char** argv) {
       o.qos = std::stoi(next());
     } else if (a == "--buffer") {
       o.buffer = (next() == "on");
+    } else if (a == "--cmd-safety") {
+      o.cmd_safety = (next() == "on");
     } else if (a == "--clean") {
       o.clean = true;
     } else if (a == "--scenario") {
