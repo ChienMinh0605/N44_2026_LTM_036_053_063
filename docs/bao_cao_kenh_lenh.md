@@ -1,7 +1,6 @@
 # Báo cáo – Kênh lệnh điều khiển drone (phần của Tiên, bản nháp)
 
-> Số liệu lấy từ `data/H/summary.md` (sinh bằng `./scripts/summarize_H.sh`). Ô ghi **(chưa đo)** là
-> các lượt H1 dưới N1–N3: cần `sudo` để đặt netem, chạy `./scripts/run_H.sh h1 N1 N2 N3`.
+> Số liệu lấy từ `data/H/summary.md` (sinh bằng `./scripts/summarize_H.sh`). Còn thiếu: link video H2.
 
 ## 1. Hai chiều dữ liệu trên cùng một Broker
 
@@ -46,7 +45,14 @@ Dòng "Đang giữ quyền" lấy từ trường `owner` của mọi ack.
 | Quay về | drone về 47.397700, 8.545600 rồi hạ cánh |
 | Tắt Gateway rồi gửi lệnh | "Không có phản hồi (quá 3 giây)" |
 
-Ảnh chụp màn hình: `data/H/app/` **(chưa chụp)**.
+Ảnh chụp màn hình App trên Linux desktop, Gateway `--source fake`:
+
+| | |
+|---|---|
+| ![Hạ cánh](../data/H/app/1_ha_canh.png) Hạ cánh: độ cao 0.0 m | ![Cất cánh](../data/H/app/2_cat_canh.png) Cất cánh 15 m: độ cao 15.0 m |
+| ![invalid_state](../data/H/app/3_invalid_state.png) Cất cánh lần hai: `rejected: invalid_state` (hai lệnh trước `accepted`, 48 ms và 58 ms) | ![Bay tới](../data/H/app/4_bay_toi.png) Bay tới: tới 47.398001, 8.546001, `accepted` |
+| ![Quay về](../data/H/app/5_quay_ve.png) Quay về: về nhà, độ cao 0.0 m | ![not_owner](../data/H/app/6_not_owner.png) op2 giữ quyền: lệnh của App bị `rejected: not_owner` |
+| ![Không phản hồi](../data/H/app/7_khong_phan_hoi.png) Tắt Gateway: "Không có phản hồi (quá 3 giây)" | |
 
 ## 4. Kết quả thí nghiệm H
 
@@ -54,13 +60,27 @@ Broker, Gateway (`--source fake`) và `commander` chạy cùng một máy Linux,
 
 ### H1 – Thời gian khứ hồi lệnh (300 lệnh `hold` mỗi lượt, cách nhau 200 ms, 3 lượt mỗi ô)
 
-| Điều kiện | QoS | Số lệnh | timeout | Trung vị (ms) | p95 (ms) | Đi / về trung vị (ms) |
-|---|---|---|---|---|---|---|
-| N0 | 0 | 900 | 0 | 2 | 41 | 1 / 1 |
-| N0 | 1 | 900 | 0 | 42 | 43 | 1 / 41 |
-| N1 (trễ 100 ms) | 0 / 1 | (chưa đo) | | | | |
-| N2 (mất 5 %) | 0 / 1 | (chưa đo) | | | | |
-| N3 (trễ 100 ms + mất 5 %) | 0 / 1 | (chưa đo) | | | | |
+| Điều kiện | QoS | Số lệnh | timeout | Trung vị (ms) | p95 (ms) | Lớn nhất (ms) | Đi / về trung vị (ms) |
+|---|---|---|---|---|---|---|---|
+| N0 | 0 | 900 | 0 | 2 | 41 | 43 | 1 / 1 |
+| N0 | 1 | 900 | 0 | 42 | 43 | 44 | 1 / 41 |
+| N1 (trễ 100 ms) | 0 | 900 | 0 | 346 | 395 | 499 | 242 / 101 |
+| N1 (trễ 100 ms) | 1 | 900 | 0 | 449 | 498 | 503 | 225 / 201 |
+| N2 (mất 5 %) | 0 | 900 | 0 | 2 | 235 | 656 | 1 / 1 |
+| N2 (mất 5 %) | 1 | 900 | 0 | 80 | 330 | 834 | 18 / 41 |
+| N3 (trễ 100 ms + mất 5 %) | 0 | 900 | 0 | 415 | 843 | 1510 | 209 / 200 |
+| N3 (trễ 100 ms + mất 5 %) | 1 | 900 | 0 | 481 | 915 | 1852 | 200 / 254 |
+
+Netem đặt trên card `eth0` của container Broker, nên chỉ các gói **Broker gửi ra** bị trễ hoặc mất.
+Mỗi lệnh đi qua Broker hai lần theo chiều ra: Broker → Gateway (lệnh) và Broker → commander (ack).
+
+Nhận xét chung:
+
+- **Không mất lệnh nào** ở cả 4 điều kiện (0 timeout trên 7200 lệnh), kể cả QoS 0 khi mất 5 % gói. Lý do:
+  mất gói xảy ra ở tầng IP, TCP truyền lại, nên ở tầng MQTT chỉ thấy lệnh tới muộn hơn. QoS 0 chỉ mất
+  tin khi chính kết nối TCP bị đứt (như H3).
+- **Lệnh chậm nhất là 1,85 s (N3, QoS 1), vẫn dưới hạn dùng 3 s**, nên trong mọi điều kiện đã thử,
+  kiểm tra 2 không từ chối nhầm một lệnh hợp lệ nào. TTL 3 s còn dư khoảng 1,1 s so với lệnh chậm nhất.
 
 Nhận xét N0:
 
@@ -72,6 +92,32 @@ Nhận xét N0:
   để xác nhận.
 - QoS 0: lượt 1 cũng khoảng 40 ms (lần này trễ ở chiều đi), lượt 2 và 3 chỉ 2 ms. Như vậy với QoS 0 hiện
   tượng Nagle không xảy ra lần nào cũng như lần nào, nên phải báo cả p95 chứ không chỉ trung vị.
+
+Nhận xét N1 (trễ 100 ms):
+
+- Netem chỉ thêm 100 ms cho mỗi chiều Broker gửi ra, nên lẽ ra khứ hồi khoảng 200 ms. Thực tế là
+  **346 ms (QoS 0) và 449 ms (QoS 1)**.
+- Phần trễ thêm là Nagle. Một gói nhỏ phải chờ gói trước được ACK mới được gửi, mà khi mạng trễ thì
+  thời gian chờ ACK tăng theo. Mỗi lần bị Nagle giữ lại tốn thêm khoảng 100 ms, thay vì khoảng 40 ms như ở N0.
+- Tách theo chiều cho thấy rõ điều này:
+  - Chiều về QoS 0 là 101 ms, chỉ có trễ netem, vì Broker chỉ gửi một gói ack.
+  - Chiều về QoS 1 là 201 ms, gồm trễ netem cộng Nagle, vì Broker gửi liền PUBACK rồi tin ack.
+  - Chiều đi khoảng 225–242 ms: cứ 200 ms lại có một lệnh mới, trong khi lệnh trước chưa được ACK.
+- Tắt Nagle (`TCP_NODELAY`) sẽ đưa khứ hồi về gần 200 ms. Đó là đề xuất cải tiến, không thay đổi khi đang đo.
+
+Nhận xét N2 (mất 5 %):
+
+- Trung vị gần như N0 (2 ms với QoS 0, 43–81 ms với QoS 1), vì 95 % gói không bị ảnh hưởng.
+- Nhưng **p95 tăng lên 235–330 ms và lớn nhất 656–834 ms**: đó là các lệnh có gói bị mất, phải đợi TCP
+  truyền lại (thời gian chờ truyền lại tối thiểu của Linux khoảng 200 ms, gói mất nhiều lần thì chờ gấp đôi).
+
+Nhận xét N3 (trễ 100 ms + mất 5 %):
+
+- Hai hiệu ứng cộng dồn: trung vị 415–481 ms, như N1 cộng thêm phần truyền lại; p95 843–915 ms;
+  lớn nhất 1,85 s.
+- Ở N3, QoS 1 chỉ chậm hơn QoS 0 khoảng 66 ms ở trung vị, trong khi QoS 0 vẫn không mất lệnh nào. Vì thế
+  với lệnh, QoS 1 **không mang lại thêm độ tin cậy** trong các điều kiện này. Nó chỉ có ích khi kết nối đứt,
+  nhưng chính lúc đó lại gây ra lệnh muộn (H2, H3), và kiểm tra 2 phải chặn lại.
 
 ### H2 – Lệnh `goto` tới muộn (Gateway tắt khoảng 11 s)
 
@@ -102,7 +148,8 @@ và 1 timeout): ack đó được gửi đúng lúc Broker tắt.
 
 ## 5. Kết luận
 
-- Kênh lệnh qua MQTT chạy được với khứ hồi khoảng 40 ms trong mạng tốt, nhưng **không thể tin vào các
+- Kênh lệnh qua MQTT không mất lệnh nào trong 7200 lệnh ở 4 điều kiện mạng. Khứ hồi khoảng 40 ms khi mạng
+  tốt, tới 1,85 s trong trường hợp xấu nhất (N3). Nagle làm khứ hồi tăng thêm theo độ trễ mạng. Tuy vậy, **không thể tin vào các
   bảo đảm của MQTT để giữ an toàn cho lệnh**. Giữ tin (retained, phiên bền, bộ đệm offline của
   client) và giao lại (QoS 1) đều làm lệnh tới muộn hoặc tới lại.
 - Hạn dùng lệnh (kiểm tra 2) là kiểm tra có tác dụng nhất trong các thí nghiệm: nó chặn lệnh trễ 11 s ở
