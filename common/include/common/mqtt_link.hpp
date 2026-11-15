@@ -48,8 +48,6 @@ struct LinkOptions {
   // Last Will. Để trống will_topic nếu không dùng.
   std::string will_topic;
   std::string will_payload;
-  int will_qos = 1;
-  bool will_retained = true;
 
   // Bộ lọc topic để subscribe sau mỗi lần kết nối. Để trống nếu không subscribe.
   std::string subscribe_filter;
