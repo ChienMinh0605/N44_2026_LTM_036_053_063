@@ -21,6 +21,8 @@ else()
   message(FATAL_ERROR "Không tìm thấy target của Paho MQTT C++")
 endif()
 
+enable_testing()
+
 add_subdirectory(common)
 add_subdirectory(logger)
 add_subdirectory(commander)  # gửi lệnh điều khiển, đo khứ hồi (thí nghiệm H)
