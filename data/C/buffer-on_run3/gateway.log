@@ -1,0 +1,44 @@
+Gateway boot_id=1794713579255 source=fake qos=1 buffer=on cmd-safety=on scenario=C-buffer-on run=3 -> data/C/buffer-on_run3
+[gateway-01] connect_attempt: tcp://172.28.0.10:1883
+[gateway-01] connected: connect onSuccess called
+sent=104 buffered=0 dropped=0
+sent=204 buffered=0 dropped=0
+sent=304 buffered=0 dropped=0
+sent=404 buffered=0 dropped=0
+sent=504 buffered=0 dropped=0
+sent=604 buffered=0 dropped=0
+sent=704 buffered=0 dropped=0
+sent=804 buffered=0 dropped=0
+sent=904 buffered=0 dropped=0
+sent=1004 buffered=0 dropped=0
+sent=1104 buffered=0 dropped=0
+sent=1204 buffered=0 dropped=0
+[gateway-01] connection_lost
+sent=1204 buffered=100 dropped=0  (MAT KET NOI)
+sent=1204 buffered=200 dropped=0  (MAT KET NOI)
+sent=1204 buffered=300 dropped=0  (MAT KET NOI)
+[gateway-01] connected: automatic reconnect
+sent=1256 buffered=348 dropped=0
+sent=1356 buffered=348 dropped=0
+sent=1456 buffered=348 dropped=0
+sent=1556 buffered=348 dropped=0
+sent=1656 buffered=348 dropped=0
+sent=1756 buffered=348 dropped=0
+sent=1856 buffered=348 dropped=0
+sent=1956 buffered=348 dropped=0
+sent=2056 buffered=348 dropped=0
+sent=2156 buffered=348 dropped=0
+sent=2256 buffered=348 dropped=0
+sent=2356 buffered=348 dropped=0
+sent=2456 buffered=348 dropped=0
+sent=2556 buffered=348 dropped=0
+sent=2656 buffered=348 dropped=0
+sent=2756 buffered=348 dropped=0
+sent=2856 buffered=348 dropped=0
+sent=2956 buffered=348 dropped=0
+sent=3056 buffered=348 dropped=0
+sent=3156 buffered=348 dropped=0
+sent=3256 buffered=348 dropped=0
+Dang dung Gateway...
+[gateway-01] disconnected
+Tong: sent=3260 buffered=348 dropped=0

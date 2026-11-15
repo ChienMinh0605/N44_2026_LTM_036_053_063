@@ -1,0 +1,6 @@
+time_ms,client_id,event,detail
+1794712570855,logger-01,connect_attempt,tcp://172.28.0.10:1883
+1794712570968,logger-01,connected,connect onSuccess called
+1794712633908,logger-01,connection_lost,
+1794712653004,logger-01,connected,automatic reconnect
+1794712771578,logger-01,disconnected,

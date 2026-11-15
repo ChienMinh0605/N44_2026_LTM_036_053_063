@@ -1,0 +1,7 @@
+scenario=F-qos1
+qos=1
+buffer=on
+run=1
+publish_sec=180
+off_at_sec=60
+off_sec=15

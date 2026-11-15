@@ -5,8 +5,8 @@ Mỗi lần chạy một thư mục riêng, đặt tên theo `<điều kiện>_q
 ```
 data/
 ├── E/N2_qos1_run3/     # sent.csv, events.csv, logger.csv, ping.txt
-├── C/buffer-off_run1/
-├── F/qos0_run2/
+├── C/buffer-off_run1/  # scripts/run_CF.sh c; tổng hợp: data/summary_CF.md
+├── F/qos0_run2/        # scripts/run_CF.sh f
 ├── pcap/               # file Wireshark (.pcapng) và ảnh chụp
 └── plots/              # bảng và biểu đồ do build/scripts/b_analyze sinh ra
 ```
@@ -17,3 +17,5 @@ data/
 - **events.csv** (Gateway) và **logger_events.csv** (Logger): `time_ms, client_id, event, detail`, trong đó event là `connect_attempt` / `connected` / `connection_lost` / `connect_failed` / `disconnected`
 - **logger.csv** (Logger): `recv_time_ms, topic, boot_id, seq, timestamp_ms, latency_ms, qos, scenario, run`
 - **ping.txt**: kết quả `ping -c 50 172.28.0.10` ngay trước lần chạy
+- **off_ms.txt / on_ms.txt** (C, F): Unix ms lúc tắt và lúc bật lại Broker (C) hoặc Logger (F)
+- **scenario.txt**: tham số của lượt chạy (QoS, bộ đệm, thời lượng, lúc gây sự cố)

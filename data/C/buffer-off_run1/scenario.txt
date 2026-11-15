@@ -1,0 +1,7 @@
+scenario=C-buffer-off
+qos=1
+buffer=off
+run=1
+publish_sec=180
+off_at_sec=60
+off_sec=15

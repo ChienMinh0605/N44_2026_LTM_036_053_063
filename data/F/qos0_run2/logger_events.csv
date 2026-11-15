@@ -1,0 +1,7 @@
+time_ms,client_id,event,detail
+1794714380457,logger-01,connect_attempt,tcp://172.28.0.10:1883
+1794714380570,logger-01,connected,connect onSuccess called
+1794714443532,logger-01,disconnected,
+1794714458647,logger-01,connect_attempt,tcp://172.28.0.10:1883
+1794714458660,logger-01,connected,connect onSuccess called
+1794714580987,logger-01,disconnected,
