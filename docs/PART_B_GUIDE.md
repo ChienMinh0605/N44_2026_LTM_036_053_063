@@ -4,11 +4,12 @@
 
 Phần B theo `Ke_hoach_lam_viec_PX4_MQTT.docx`:
 
-1. `scripts/fake_publisher.cpp`: publisher C++ độc lập cho C kiểm thử app, 4 topic × 5 Hz, JSON chung, `boot_id`, `seq`, `timestamp_ms`, status retained + Last Will.
-2. `scripts/experiment_runner.cpp`: trình chạy thí nghiệm E, C++ chạy **Ubuntu/WSL2**; gọi `scripts/netem.sh` để cấu hình Linux `tc`. `scripts/run_experiment.sh` là wrapper mỏng.
-3. Wireshark: bắt CONNECT/CONNACK, PUBLISH/PUBACK, TCP retransmission; xem hướng dẫn bên dưới.
-4. `scripts/analyze.cpp`: đọc `sent.csv` + `logger.csv`, tính tỷ lệ nhận, trùng tin, median, p95, trung bình ± độ lệch chuẩn, xuất `per_run.csv`, `summary.csv`, `cdf.svg`, `receive_rate.svg`.
-5. Nội dung cơ sở lý thuyết / báo cáo ở cuối file.
+1. `scripts/experiment_runner.cpp`: trình chạy thí nghiệm E, C++ chạy **Ubuntu/WSL2**; gọi `scripts/netem.sh` để cấu hình Linux `tc`. `scripts/run_experiment.sh` là wrapper mỏng.
+2. Wireshark: bắt CONNECT/CONNACK, PUBLISH/PUBACK, TCP retransmission; xem hướng dẫn bên dưới.
+3. `scripts/analyze.cpp`: đọc `sent.csv` + `logger.csv`, tính tỷ lệ nhận, trùng tin, median, p95, trung bình ± độ lệch chuẩn, xuất `per_run.csv`, `summary.csv`, `cdf.svg`, `receive_rate.svg`.
+4. Nội dung cơ sở lý thuyết / báo cáo ở cuối file.
+
+Muốn có dữ liệu giả để thử app thì dùng `./build/gateway/gateway --source fake` (nhận được cả lệnh điều khiển).
 
 **Không chỉnh sửa `common/`, `gateway/`, `logger/`, `app/` của các thành viên.** File `CMakeLists.txt` ở root chỉ được thêm `add_subdirectory(scripts)`.
 
@@ -22,15 +23,9 @@ cmake -S . -B build -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/dev/vcpkg/scripts/buildsyst
 cmake --build build --config Release
 ```
 
-Đường dẫn `cd` là ví dụ; dùng đúng đường dẫn repo thật sau khi giải nén. Chương trình B ở `build\scripts\Release\b_fake_publisher.exe`, `build\scripts\Release\b_analyze.exe`. Không có `b_experiment_runner.exe` vì tool này cần `fork`, `tc`, `nsenter` của Linux.
+Đường dẫn `cd` là ví dụ; dùng đúng đường dẫn repo thật sau khi giải nén. Chương trình B ở `build\scripts\Release\b_analyze.exe`. Không có `b_experiment_runner.exe` vì tool này cần `fork`, `tc`, `nsenter` của Linux.
 
 **Cấu hình Broker:** mã hiện tại của nhóm đặt Broker là `tcp://172.28.0.10:1883`, user `drone`, password `drone123` trong `common/include/common/config.hpp`. Không dùng MQTT Broker Windows 127.0.0.1 mà không đổi cấu hình này. Để kết nối Broker Windows chạy local, cần thống nhất với nhóm rồi thay Broker URL và cấu hình tài khoản (tránh commit thay đổi cấu hình chung không được duyệt).
-
-```cmd
-build\scripts\Release\b_fake_publisher.exe --qos 1 --duration 60
-```
-
-Mỗi 200 ms phát một chu kỳ 4 topic; gửi status `online` retained khi connected, `offline` retained khi thoát. Publisher này **chỉ để smoke test**, không tạo `sent.csv` và **không dùng làm nguồn đo E**.
 
 ## B. Build và chạy trên Ubuntu/WSL2
 
@@ -101,7 +96,7 @@ Các file:
 - `cdf.svg`: đồ thị CDF của độ trễ, gộp các lượt theo scenario/QoS.
 - `receive_rate.svg`: tỷ lệ nhận trung bình theo điều kiện mạng và QoS.
 
-**Quy tắc phân tích:** Loại 10 giây đầu từ `sent.csv`; Logger chỉ tính tin có định danh `(boot_id, topic, seq)` thuộc bộ gửi còn lại; bản tin nhận lặp chỉ được tính một lần vào tỷ lệ nhận nhưng đếm số lần bản tin dư. Độ trễ tính bằng `recv_time_ms - timestamp_ms`. Trung vị và p95 dùng nội suy trên số liệu đã sắp tăng; độ lệch chuẩn mẫu theo N−1. `sent.csv` phải là bản do Gateway tạo, không phải riêng Publisher B.
+**Quy tắc phân tích:** Loại 10 giây đầu từ `sent.csv`; Logger chỉ tính tin có định danh `(boot_id, topic, seq)` thuộc bộ gửi còn lại; bản tin nhận lặp chỉ được tính một lần vào tỷ lệ nhận nhưng đếm số lần bản tin dư. Độ trễ tính bằng `recv_time_ms - timestamp_ms`. Trung vị và p95 lấy phần tử thứ n·50/100 và n·95/100 của số liệu đã sắp tăng (giống commander và `summarize_H.sh` của thí nghiệm H, để hai bảng so được với nhau); độ lệch chuẩn mẫu theo N−1. `sent.csv` phải là bản do Gateway tạo, không phải riêng Publisher B.
 
 ## D. Wireshark
 
@@ -129,7 +124,7 @@ git pull
 git switch -c feature/experiment-tools-b
 # copy file B vào repo đã clone, KHÔNG copy đè common/gateway/logger/app
 git rm -f scripts/analyze.py   # nếu file TODO này có trong repo
-git add CMakeLists.txt scripts/fake_publisher.cpp scripts/analyze.cpp scripts/experiment_runner.cpp scripts/CMakeLists.txt scripts/run_experiment.sh scripts/run_all_E.sh docs/PART_B_GUIDE.md
+git add CMakeLists.txt scripts/analyze.cpp scripts/experiment_runner.cpp scripts/CMakeLists.txt scripts/run_experiment.sh scripts/run_all_E.sh docs/PART_B_GUIDE.md
 git commit -m "feat(part-b): C++ MQTT test tools and experiment analysis"
 git push -u origin feature/experiment-tools-b
 ```
@@ -138,7 +133,7 @@ Sau đó mở Pull Request tới `main`, nhờ A review. Không đẩy `build/`,
 
 ## Kiểm tra trước khi nộp
 
-- [ ] Windows build `b_fake_publisher` với Paho và CMake đã cài; gửi 4 topic + status tới Broker theo config nhóm.
+- [ ] Windows build `b_analyze` với CMake đã cài.
 - [ ] A hoàn thiện Broker/Gateway/Logger, chạy 1 lượt E trên Linux thành công.
 - [ ] Có PCAP và ảnh CONNECT/CONNACK, PUBLISH/PUBACK, retransmission (nếu ghi được).
 - [ ] Có đủ 24 lượt E với 24 cặp `sent.csv` + `logger.csv`, ping và log.
