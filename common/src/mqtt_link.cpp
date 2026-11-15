@@ -83,8 +83,7 @@ struct MqttLink::Impl {
     // Sau lần kết nối đầu, Paho tự thử lại: chờ 1 s, rồi gấp đôi mỗi lần, tối đa 8 s.
     conn_opts.set_automatic_reconnect(kReconnectMinSec, kReconnectMaxSec);
     if (!opts.will_topic.empty()) {
-      conn_opts.set_will(mqtt::will_options(opts.will_topic, opts.will_payload, opts.will_qos,
-                                            opts.will_retained));
+      conn_opts.set_will(mqtt::will_options(opts.will_topic, opts.will_payload, 1, true));
     }
     if (!opts.events_csv.empty()) events.open(opts.events_csv, "time_ms,client_id,event,detail");
     worker = std::thread([this] { worker_loop(); });

@@ -114,23 +114,6 @@ Các file:
 4. Chỉ số: tỷ lệ nhận duy nhất, số tin trùng, median, p95, CDF; thống kê trung bình ± SD 3 lượt.
 5. Chèn `summary.csv`, `receive_rate.svg`, `cdf.svg`, hình chụp Wireshark; kết luận **chỉ sau khi chạy số liệu thật**. MQTT trên TCP có thể làm tăng độ trễ khi mạng mất gói thay vì mất bản tin ứng dụng trực tiếp.
 
-## GitHub: chỉ push phần B
-
-Repo nhóm có `main`, nên không push thẳng. Trong bản ZIP đầy đủ, có thể lấy **riêng các file được liệt kê** từ gói `PX4_MQTT_PART_B_ONLY.zip` để chép vào repo Git clone. Lưu ý `scripts/run_experiment.sh` và `scripts/analyze.py` của nhóm đang là TODO; bản mới thay run_experiment bằng launcher C++, đồng thời **xóa** `scripts/analyze.py` cũ vì đã chuyển hoàn toàn sang C++.
-
-```bash
-git switch main
-git pull
-git switch -c feature/experiment-tools-b
-# copy file B vào repo đã clone, KHÔNG copy đè common/gateway/logger/app
-git rm -f scripts/analyze.py   # nếu file TODO này có trong repo
-git add CMakeLists.txt scripts/analyze.cpp scripts/experiment_runner.cpp scripts/CMakeLists.txt scripts/run_experiment.sh scripts/run_all_E.sh docs/PART_B_GUIDE.md
-git commit -m "feat(part-b): C++ MQTT test tools and experiment analysis"
-git push -u origin feature/experiment-tools-b
-```
-
-Sau đó mở Pull Request tới `main`, nhờ A review. Không đẩy `build/`, password, hoặc CSV thí nghiệm chưa làm thật.
-
 ## Kiểm tra trước khi nộp
 
 - [ ] Windows build `b_analyze` với CMake đã cài.
