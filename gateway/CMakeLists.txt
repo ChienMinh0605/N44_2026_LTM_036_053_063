@@ -12,3 +12,9 @@ if(MAVSDK_FOUND)
   target_compile_definitions(gateway PRIVATE HAVE_MAVSDK)
   target_link_libraries(gateway PRIVATE MAVSDK::mavsdk)
 endif()
+
+# Test kênh lệnh, không cần Broker: ctest --test-dir build
+add_executable(command_handler_test test/command_handler_test.cpp src/command_handler.cpp src/fake_source.cpp)
+target_include_directories(command_handler_test PRIVATE src)
+target_link_libraries(command_handler_test PRIVATE px4mqtt_common)
+add_test(NAME command_handler COMMAND command_handler_test)

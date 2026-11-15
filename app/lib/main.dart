@@ -277,18 +277,19 @@ class _HomePageState extends State<HomePage> {
 
   // Đổi phần "value" trong JSON thành chữ để hiển thị
   String formatValue(String name, Map v) {
+    // Gateway ghi NaN (PX4 chưa biết giá trị, ví dụ % pin) thành null: hiện "-"
+    String f(Object? x, int digits) => x is num ? x.toStringAsFixed(digits) : '-';
     if (name == 'position') {
-      return '${v['lat'].toStringAsFixed(6)}, ${v['lon'].toStringAsFixed(6)}';
+      return '${f(v['lat'], 6)}, ${f(v['lon'], 6)}';
     }
     if (name == 'altitude') {
-      return '${v['rel_m'].toStringAsFixed(1)} m';
+      return '${f(v['rel_m'], 1)} m';
     }
     if (name == 'velocity') {
-      return '${v['ground_mps'].toStringAsFixed(1)} m/s';
+      return '${f(v['ground_mps'], 1)} m/s';
     }
     if (name == 'battery') {
-      return '${v['percent'].toStringAsFixed(1)} %   '
-          '${v['voltage'].toStringAsFixed(2)} V';
+      return '${f(v['percent'], 1)} %   ${f(v['voltage'], 2)} V';
     }
     return '$v';
   }
