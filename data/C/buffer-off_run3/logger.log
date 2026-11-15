@@ -1,0 +1,54 @@
+Logger qos=1 scenario=C-buffer-off run=3 -> data/C/buffer-off_run3/logger.csv
+[logger-01] connect_attempt: tcp://172.28.0.10:1883
+[logger-01] connected: connect onSuccess called
+status: {"drone_id":"001","state":"offline"} (retained)
+status: {"drone_id":"001","state":"online"}
+da nhan 44 tin (+8/s)
+da nhan 144 tin (+20/s)
+da nhan 244 tin (+20/s)
+da nhan 344 tin (+20/s)
+da nhan 440 tin (+19/s)
+da nhan 544 tin (+20/s)
+da nhan 644 tin (+20/s)
+da nhan 744 tin (+20/s)
+da nhan 844 tin (+20/s)
+da nhan 940 tin (+19/s)
+da nhan 1044 tin (+20/s)
+da nhan 1144 tin (+20/s)
+status: {"drone_id":"001","state":"offline"}
+[logger-01] connection_lost
+da nhan 1204 tin (+12/s)
+da nhan 1204 tin (+0/s)
+da nhan 1204 tin (+0/s)
+da nhan 1204 tin (+0/s)
+[logger-01] connected: automatic reconnect
+status: {"drone_id":"001","state":"offline"}
+status: {"drone_id":"001","state":"offline"} (retained)
+status: {"drone_id":"001","state":"online"}
+da nhan 1245 tin (+8/s)
+da nhan 1345 tin (+20/s)
+da nhan 1445 tin (+20/s)
+da nhan 1545 tin (+20/s)
+da nhan 1645 tin (+20/s)
+da nhan 1745 tin (+20/s)
+da nhan 1845 tin (+20/s)
+da nhan 1945 tin (+20/s)
+da nhan 2045 tin (+20/s)
+da nhan 2145 tin (+20/s)
+da nhan 2245 tin (+20/s)
+da nhan 2345 tin (+20/s)
+da nhan 2445 tin (+20/s)
+da nhan 2545 tin (+20/s)
+da nhan 2645 tin (+20/s)
+da nhan 2745 tin (+20/s)
+da nhan 2845 tin (+20/s)
+da nhan 2941 tin (+19/s)
+da nhan 3045 tin (+20/s)
+da nhan 3145 tin (+20/s)
+status: {"drone_id":"001","state":"offline"}
+da nhan 3213 tin (+13/s)
+da nhan 3213 tin (+0/s)
+da nhan 3213 tin (+0/s)
+da nhan 3213 tin (+0/s)
+[logger-01] disconnected
+Dung. Tong cong 3213 tin, 0 tin sai dinh dang.

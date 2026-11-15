@@ -1,0 +1,4 @@
+[logger-01] connect_attempt: tcp://172.28.0.10:1883
+[logger-01] connected: connect onSuccess called
+[logger-01] disconnected
+Da xoa phien cu cua logger-01
