@@ -1,0 +1,5 @@
+scenario=N1
+qos=1
+run=2
+publish_duration_sec=180
+logger_extra_sec=15

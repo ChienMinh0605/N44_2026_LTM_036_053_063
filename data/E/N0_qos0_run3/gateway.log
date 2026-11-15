@@ -1,0 +1,42 @@
+Gateway boot_id=1794719786443 source=fake qos=0 buffer=on cmd-safety=on scenario=N0 run=3 -> /mnt/work/Work/Projects/Network(C++)/Project_Cuoi_Ki/px4-mqtt/data/E/N0_qos0_run3
+[gateway-01] connect_attempt: tcp://172.28.0.10:1883
+[gateway-01] connected: connect onSuccess called
+sent=104 buffered=0 dropped=0
+sent=204 buffered=0 dropped=0
+sent=304 buffered=0 dropped=0
+sent=404 buffered=0 dropped=0
+sent=504 buffered=0 dropped=0
+sent=604 buffered=0 dropped=0
+sent=704 buffered=0 dropped=0
+sent=804 buffered=0 dropped=0
+sent=904 buffered=0 dropped=0
+sent=1004 buffered=0 dropped=0
+sent=1104 buffered=0 dropped=0
+sent=1204 buffered=0 dropped=0
+sent=1304 buffered=0 dropped=0
+sent=1404 buffered=0 dropped=0
+sent=1504 buffered=0 dropped=0
+sent=1604 buffered=0 dropped=0
+sent=1704 buffered=0 dropped=0
+sent=1804 buffered=0 dropped=0
+sent=1904 buffered=0 dropped=0
+sent=2004 buffered=0 dropped=0
+sent=2104 buffered=0 dropped=0
+sent=2204 buffered=0 dropped=0
+sent=2304 buffered=0 dropped=0
+sent=2404 buffered=0 dropped=0
+sent=2504 buffered=0 dropped=0
+sent=2604 buffered=0 dropped=0
+sent=2704 buffered=0 dropped=0
+sent=2804 buffered=0 dropped=0
+sent=2904 buffered=0 dropped=0
+sent=3004 buffered=0 dropped=0
+sent=3104 buffered=0 dropped=0
+sent=3204 buffered=0 dropped=0
+sent=3304 buffered=0 dropped=0
+sent=3404 buffered=0 dropped=0
+sent=3504 buffered=0 dropped=0
+sent=3604 buffered=0 dropped=0
+Dang dung Gateway...
+[gateway-01] disconnected
+Tong: sent=3604 buffered=0 dropped=0
