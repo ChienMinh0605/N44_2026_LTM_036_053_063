@@ -13,6 +13,13 @@
 
 namespace px4mqtt {
 
+// Đổi dấu phẩy và xuống dòng thành dấu cách, để một ô không làm lệch số cột CSV.
+inline std::string csv_safe(std::string s) {
+  for (char& ch : s)
+    if (ch == ',' || ch == '\n') ch = ' ';
+  return s;
+}
+
 class CsvWriter {
  public:
   CsvWriter() = default;

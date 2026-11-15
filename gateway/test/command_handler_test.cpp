@@ -1,6 +1,7 @@
 // Test 4 kiểm tra an toàn của kênh lệnh (command_handler.cpp), không cần Broker.
 //   cmake --build build && ctest --test-dir build
 #undef NDEBUG  // assert phải chạy cả khi build Release
+#include <algorithm>
 #include <cassert>
 #include <string>
 
@@ -29,6 +30,10 @@ int main() {
   assert(reason(cmd("op2", 1, t + 100), t + 100) == "not_owner"); // kiểm tra 4: op1 còn giữ quyền
   assert(reason(cmd("op2", 2, t + 6000), t + 6000) == "");       // op1 im lặng quá 5 s: quyền được nhả
   assert(reason("not json", t) == "invalid");
+
+  // Tên người gửi có dấu phẩy không được làm lệch cột cmd_log.csv (10 cột = 9 dấu phẩy)
+  const std::string line = h.handle(cmd("a,b", 7, t), t, false, false).log_line;
+  assert(std::count(line.begin(), line.end(), ',') == 9);
 
   CommandHandler unsafe(false, *drone);  // tắt kiểm tra (thí nghiệm H): lệnh retained vẫn chạy
   assert(unsafe.handle(cmd("op1", 9, t), t, true, false).ack["reason"] == "");

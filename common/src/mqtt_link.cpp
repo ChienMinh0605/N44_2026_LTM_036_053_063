@@ -118,10 +118,8 @@ struct MqttLink::Impl {
   void log_event(const std::string& event, const std::string& detail) {
     std::cerr << "[" << opts.client_id << "] " << event << (detail.empty() ? "" : ": " + detail) << "\n";
     if (!events.is_open()) return;
-    std::string d = detail;
-    for (char& ch : d)
-      if (ch == ',' || ch == '\n') ch = ' ';  // giữ đúng số cột CSV
-    events.write_line(std::to_string(now_ms()) + "," + opts.client_id + "," + event + "," + d);
+    events.write_line(std::to_string(now_ms()) + "," + opts.client_id + "," + event + "," +
+                      csv_safe(detail));
   }
 };
 

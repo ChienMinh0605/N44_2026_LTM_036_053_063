@@ -37,7 +37,8 @@ std::vector<Row> read_csv(const fs::path& file,const std::vector<std::string>& r
   return rows;
 }
 long long number(const std::string& s) {size_t len=0;auto x=std::stoll(s,&len);if(len!=s.size())throw std::runtime_error("Invalid integer: "+s);return x;}
-double percentile(const std::vector<double>& sorted,double q) {if(sorted.empty())return 0;double r=q*(sorted.size()-1);size_t i=static_cast<size_t>(r);double d=r-i;return sorted[i]*(1-d)+sorted[std::min(i+1,sorted.size()-1)]*d;}
+// Lay phan tu thu n*pct/100 (giong commander va summarize_H.sh) de bang E va H so duoc voi nhau.
+double percentile(const std::vector<double>& sorted,size_t pct) {if(sorted.empty())return 0;return sorted[std::min(sorted.size()-1,sorted.size()*pct/100)];}
 Result calculate(const fs::path& dir,const std::string& scenario,int qos,int run) {
   auto sent=read_csv(dir/"sent.csv",{"boot_id","topic","seq","qos","timestamp_ms"});
   auto got=read_csv(dir/"logger.csv",{"recv_time_ms","topic","boot_id","seq","timestamp_ms"});
@@ -64,8 +65,8 @@ Result calculate(const fs::path& dir,const std::string& scenario,int qos,int run
   result.received=received.size();
   result.rate=result.sent?100.0*result.received/result.sent:0;
   std::sort(result.latency.begin(),result.latency.end());
-  result.median=percentile(result.latency,.5);
-  result.p95=percentile(result.latency,.95);
+  result.median=percentile(result.latency,50);
+  result.p95=percentile(result.latency,95);
   return result;
 }
 void csv_header(std::ostream& o) {o<<"scenario,qos,run,sent,received_unique,receive_rate_pct,duplicate_messages,median_ms,p95_ms\n";}

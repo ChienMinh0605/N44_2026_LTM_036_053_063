@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "common/config.hpp"
+#include "common/csv_writer.hpp"
 
 namespace px4mqtt {
 
@@ -74,13 +75,8 @@ CommandOutcome CommandHandler::handle(const std::string& payload, int64_t recv_m
              {"action", action},       {"result", reason.empty() ? "accepted" : "rejected"},
              {"reason", reason},       {"sent_ms", sent_ms},
              {"gw_recv_ms", recv_ms},  {"owner", owner_}};
-  std::string a = action;
-  for (char& ch : a)
-    if (ch == ',' || ch == '\n') ch = ' ';  // giữ đúng số cột CSV
-  std::string f = from;
-  for (char& ch : f)
-    if (ch == ',' || ch == '\n') ch = ' ';
-  out.log_line = std::to_string(recv_ms) + "," + f + "," + std::to_string(cmd_id) + "," + a + "," +
+  out.log_line = std::to_string(recv_ms) + "," + csv_safe(from) + "," + std::to_string(cmd_id) +
+                 "," + csv_safe(action) + "," +
                  std::to_string(sent_ms) + "," + std::to_string(age_ms) + "," +
                  (retained ? "1" : "0") + "," + (dup ? "1" : "0") + "," +
                  (reason.empty() ? "accepted" : "rejected") + "," + reason;
