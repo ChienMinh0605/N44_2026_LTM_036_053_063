@@ -70,14 +70,29 @@ p95 lấy phần tử thứ n·50/100 và n·95/100 (giống thí nghiệm H).
    | true (Nagle tắt) | 1 | **103 ms** | 202 ms |
 
    Tắt Nagle thì trung vị về đúng khoảng 100 ms netem thêm vào, và hết chênh lệch giữa QoS 0 và QoS 1. Khi Nagle
-   bật, trung vị dao động mạnh (145–202 ms) tuỳ thời điểm tin rơi vào lúc chờ ACK. p95 vẫn khoảng 200 ms dù tắt
-   Nagle; phần chậm thêm ở các tin cuối này chưa tìm hiểu.
+   bật, trung vị dao động mạnh (145–202 ms) tuỳ thời điểm tin rơi vào lúc chờ ACK.
+
+   **p95 vẫn khoảng 200 ms dù tắt Nagle trên Broker, vì còn Nagle ở socket của Gateway** (đã xác nhận bằng
+   Wireshark, `data/pcap/6_N1_nodelay.pcap`: N1, QoS 1, Broker `set_tcp_nodelay true`, 392 tin sau 10 s đầu).
+   Mỗi 200 ms Gateway publish liền 4 tin (position, altitude, velocity, battery). Tin đầu lên dây ngay; ba tin
+   sau là gói nhỏ, phải chờ Broker ACK tin đầu, mà ACK (đi kèm PUBACK) bị netem làm trễ 100 ms. Khi ACK tới,
+   ba tin được gộp vào **một** gói TCP (ví dụ gói 793). Tách độ trễ từng tin theo thời điểm trên dây:
+
+   | Đoạn | Trung vị | p95 |
+   |---|---|---|
+   | Trong Gateway (từ `timestamp_ms` tới lúc lên dây) | 1 ms | 101 ms |
+   | Broker + netem (Gateway → Broker tới Broker → Logger) | 100 ms | 100 ms |
+   | Tổng | 101 ms | 201 ms |
+
+   Khoảng một nửa số chu kỳ, ACK của chu kỳ trước về đúng lúc nên cả 4 tin đi ngay. Vì vậy khoảng 37 % số tin
+   chờ thêm 100 ms: không đủ để kéo trung vị, nhưng đủ làm p95 thành 200 ms. Thư viện Paho mà Gateway dùng không
+   đặt `TCP_NODELAY`, nên muốn hết phần này phải tắt Nagle ngay trên socket của Gateway.
    Nhóm giữ cấu hình mặc định cho toàn bộ thí nghiệm. Với telemetry cần trễ thấp thì nên bật
    `set_tcp_nodelay true` trên Broker.
 
 ## Kết luận
 
 Với telemetry gửi đều 20 tin/s qua một kết nối TCP còn sống, **TCP đã đảm bảo không mất tin**; mạng xấu chỉ làm
-tin tới muộn hơn (p95 tới khoảng 0,6 s ở N3), và thuật toán Nagle trên Broker còn cộng thêm khoảng 50–100 ms khi
-đường truyền bị trễ. QoS 1 không cải thiện tỷ lệ nhận trong trường hợp này. QoS 1 chỉ đáng dùng khi có nguy cơ **mất kết nối**, và phải kết hợp với phiên bền (`clean_session = false`)
+tin tới muộn hơn (p95 tới khoảng 0,6 s ở N3), và thuật toán Nagle (trên Broker và trên socket của Gateway) còn cộng thêm khoảng
+50–100 ms khi đường truyền bị trễ. QoS 1 không cải thiện tỷ lệ nhận trong trường hợp này. QoS 1 chỉ đáng dùng khi có nguy cơ **mất kết nối**, và phải kết hợp với phiên bền (`clean_session = false`)
 hoặc bộ đệm phía client mới có tác dụng (xem thí nghiệm C, F).

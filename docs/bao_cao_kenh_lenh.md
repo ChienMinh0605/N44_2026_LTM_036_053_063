@@ -86,10 +86,26 @@ Nhận xét N0:
 
 - Không mất lệnh nào (0 timeout trên 1800 lệnh).
 - **QoS 1 luôn khoảng 42 ms, và phần trễ nằm ở chiều về** (ack từ Gateway tới commander: 41 ms), chiều
-  đi chỉ 1 ms. Chiến đã xác định nguyên nhân là Nagle của TCP gặp delayed ACK. Giả thuyết cụ thể hơn: với
-  QoS 1, Broker ghi liền hai gói nhỏ về commander (PUBACK cho lệnh, rồi PUBLISH của ack). Nagle giữ gói
-  thứ hai cho tới khi commander ACK gói thứ nhất, mà ACK đó bị trì hoãn khoảng 40 ms. Cần chụp Wireshark
-  để xác nhận.
+  đi chỉ 1 ms. Nguyên nhân là Nagle của TCP gặp delayed ACK, **đã xác nhận bằng Wireshark**
+  (`data/pcap/5_lenh_qos1_N0.pcap`, 20 lệnh hold QoS 1, khứ hồi 41–43 ms). Nhưng gói bị giữ nằm ở **socket
+  của Gateway**, không phải ở Broker như giả thuyết ban đầu. Trình tự của mỗi lệnh (lệnh đầu, gói 96–105):
+
+  | Thời điểm | Gói | Diễn biến |
+  |---|---|---|
+  | 0 ms | commander → Broker → Gateway | PUBLISH lệnh (QoS 1) |
+  | 0,1 ms | Gateway → Broker | PUBACK cho lệnh: một gói nhỏ, Broker chưa ACK |
+  | ~12 ms | (trong Gateway) | Gateway thực hiện xong lệnh hold qua MAVSDK, gọi publish tin ack (`ack_ms`) |
+  | 12–40 ms | (trong Gateway) | Nagle giữ tin ack vì PUBACK trước đó chưa được ACK |
+  | 40,2 ms | Broker → Gateway | Broker gửi TCP ACK cho PUBACK, trễ 40 ms do **delayed ACK** |
+  | 40,2 ms | Gateway → Broker | ngay sau đó (0,0 ms) tin ack mới lên dây |
+  | 40,3 ms | Broker → commander | Broker chuyển tin ack ngay (0,1 ms) |
+
+  Trên 20 lệnh: Broker ACK PUBACK của Gateway sau 40,1–41,3 ms. Tin ack lên dây đúng 0,0 ms sau ACK đó,
+  sau khi nằm chờ trong Gateway 19–36 ms (trung vị 29 ms). Broker → commander không bị giữ: commander cũng
+  ACK trễ PUBACK của Broker khoảng 40 ms, nhưng lúc đó Broker không có gì cần gửi tiếp. Vì Gateway thực
+  hiện lệnh mất 5–21 ms, luôn ít hơn 40 ms, nên khứ hồi luôn bị kéo đúng về khoảng 40 ms. Nagle bật vì
+  thư viện Paho mà Gateway dùng không đặt `TCP_NODELAY`; `set_tcp_nodelay true` trên Broker không chữa được
+  trường hợp này.
 - QoS 0: lượt 1 cũng khoảng 40 ms (lần này trễ ở chiều đi), lượt 2 và 3 chỉ 2 ms. Như vậy với QoS 0 hiện
   tượng Nagle không xảy ra lần nào cũng như lần nào, nên phải báo cả p95 chứ không chỉ trung vị.
 
@@ -100,10 +116,13 @@ Nhận xét N1 (trễ 100 ms):
 - Phần trễ thêm là Nagle. Một gói nhỏ phải chờ gói trước được ACK mới được gửi, mà khi mạng trễ thì
   thời gian chờ ACK tăng theo. Mỗi lần bị Nagle giữ lại tốn thêm khoảng 100 ms, thay vì khoảng 40 ms như ở N0.
 - Tách theo chiều cho thấy rõ điều này:
-  - Chiều về QoS 0 là 101 ms, chỉ có trễ netem, vì Broker chỉ gửi một gói ack.
-  - Chiều về QoS 1 là 201 ms, gồm trễ netem cộng Nagle, vì Broker gửi liền PUBACK rồi tin ack.
+  - Chiều về QoS 0 là 101 ms, chỉ có trễ netem: Gateway không phải gửi PUBACK nên tin ack đi ngay.
+  - Chiều về QoS 1 là 201 ms, gồm trễ netem cộng Nagle: như ở N0, tin ack chờ trong Gateway tới khi Broker
+    ACK gói PUBACK, mà ACK này bị netem làm trễ 100 ms. (Suy từ pcap N0 và pcap telemetry ở N1, nơi
+    Gateway giữ tin đúng 100 ms; chưa bắt gói riêng cho lệnh ở N1.)
   - Chiều đi khoảng 225–242 ms: cứ 200 ms lại có một lệnh mới, trong khi lệnh trước chưa được ACK.
-- Tắt Nagle (`TCP_NODELAY`) sẽ đưa khứ hồi về gần 200 ms. Đó là đề xuất cải tiến, không thay đổi khi đang đo.
+- Tắt Nagle trên socket của Gateway (`TCP_NODELAY`) sẽ đưa khứ hồi về gần 200 ms. Đó là đề xuất cải tiến,
+  không thay đổi khi đang đo.
 
 Nhận xét N2 (mất 5 %):
 
@@ -149,7 +168,8 @@ và 1 timeout): ack đó được gửi đúng lúc Broker tắt.
 ## 5. Kết luận
 
 - Kênh lệnh qua MQTT không mất lệnh nào trong 7200 lệnh ở 4 điều kiện mạng. Khứ hồi khoảng 40 ms khi mạng
-  tốt, tới 1,85 s trong trường hợp xấu nhất (N3). Nagle làm khứ hồi tăng thêm theo độ trễ mạng. Tuy vậy, **không thể tin vào các
+  tốt, tới 1,85 s trong trường hợp xấu nhất (N3). Nagle trên socket của Gateway gặp delayed ACK của Broker làm khứ hồi tăng thêm 40 ms
+  (N0) tới 100 ms (N1), đã xác nhận bằng Wireshark. Tuy vậy, **không thể tin vào các
   bảo đảm của MQTT để giữ an toàn cho lệnh**. Giữ tin (retained, phiên bền, bộ đệm offline của
   client) và giao lại (QoS 1) đều làm lệnh tới muộn hoặc tới lại.
 - Hạn dùng lệnh (kiểm tra 2) là kiểm tra có tác dụng nhất trong các thí nghiệm: nó chặn lệnh trễ 11 s ở
