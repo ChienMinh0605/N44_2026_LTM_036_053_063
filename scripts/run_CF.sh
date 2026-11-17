@@ -50,6 +50,7 @@ prepare() {  # prepare <thư mục>: trả về 1 nếu lượt này đã có d�
   fi
   rm -rf "$d"; mkdir -p "$d"
   wait_broker
+  ./scripts/hover.sh >"$d/hover.txt" 2>&1 || { cat "$d/hover.txt" >&2; exit 1; }  # đo khi drone hover
   "$LG" --clean >"$d/clean.log" 2>&1  # Logger không nhận lại tin của lượt trước
 }
 

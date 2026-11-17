@@ -48,6 +48,7 @@ skip_if_done() {
     return 0
   fi
   rm -rf "$d"; mkdir -p "$d"
+  ./scripts/hover.sh >"$d/hover.txt" 2>&1 || { cat "$d/hover.txt" >&2; exit 1; }  # đo khi drone hover
   return 1
 }
 
