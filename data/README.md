@@ -19,3 +19,9 @@ data/
 - **ping.txt**: kết quả `ping -c 50 172.28.0.10` ngay trước lần chạy
 - **off_ms.txt / on_ms.txt** (C, F): Unix ms lúc tắt và lúc bật lại Broker (C) hoặc Logger (F)
 - **scenario.txt**: tham số của lượt chạy (QoS, bộ đệm, thời lượng, lúc gây sự cố)
+- **hover.txt** (E, C, F, H): độ cao drone PX4 SITL trước lượt đo, do `scripts/hover.sh` ghi (tự cất cánh nếu drone
+  đang ở dưới đất)
+- **C/reconnect_strace/**: thời điểm Gateway thử kết nối lại khi Broker tắt 15 s, đo riêng bằng `strace`
+
+Số liệu C, E, F, H đo bằng PX4 SITL v1.17.0 ngày 17/11/2026 (ảnh A, B, D và `H/app` chưa chụp lại). Bộ số cũ đo
+bằng nguồn dữ liệu giả còn trong git ở commit `5dd7169`.
