@@ -34,12 +34,15 @@ mới. Ô kết quả hiện `accepted` (xanh) hoặc `rejected: <reason>` (đ�
 chiều đi (App → Gateway) và chiều về (Gateway → App). Sau 3 s không có ack, App hiện "Không có phản hồi".
 Dòng "Đang giữ quyền" lấy từ trường `owner` của mọi ack.
 
-Đã kiểm tra với Broker và Gateway thật (`app/test/cmd_channel_live_test.dart`):
+Đã kiểm tra với Broker và Gateway thật (`app/test/cmd_channel_live_test.dart`). Bảng và ảnh dưới đây chụp khi Gateway
+còn dùng nguồn dữ liệu giả. Lý do `invalid_state` chỉ có ở nguồn đó: Gateway dùng PX4 không tự kiểm tra trạng thái
+bay mà để PX4 quyết định, nên test nay kiểm tra bước từ chối bằng lệnh cất cánh 200 m (`rejected: out_of_range`).
+Test chưa chạy lại với PX4.
 
 | Tình huống | Kết quả |
 |---|---|
 | Hạ cánh | `accepted`, khứ hồi 44 ms, độ cao về 0 m |
-| Cất cánh 15 m, rồi cất cánh lần nữa | `accepted`, lên 14,9 m; lần hai `rejected: invalid_state` |
+| Cất cánh 15 m, rồi cất cánh lần nữa | `accepted`, lên 14,9 m; lần hai `rejected: invalid_state` (nguồn giả) |
 | Bay tới 47.3980, 8.5460 | `accepted`, tốc độ 5 m/s |
 | `commander --from op2` ngay sau lệnh của App | op2 bị `not_owner`, App hiện "app-tien (mình)" |
 | App nhả quyền, op2 gửi lệnh | App hiện người giữ quyền là `op2`, lệnh của App bị `not_owner` |
@@ -51,7 +54,7 @@ Dòng "Đang giữ quyền" lấy từ trường `owner` của mọi ack.
 | | |
 |---|---|
 | ![Hạ cánh](../data/H/app/1_ha_canh.png) Hạ cánh: độ cao 0.0 m | ![Cất cánh](../data/H/app/2_cat_canh.png) Cất cánh 15 m: độ cao 15.0 m |
-| ![invalid_state](../data/H/app/3_invalid_state.png) Cất cánh lần hai: `rejected: invalid_state` (hai lệnh trước `accepted`, 48 ms và 58 ms) | ![Bay tới](../data/H/app/4_bay_toi.png) Bay tới: tới 47.398001, 8.546001, `accepted` |
+| ![invalid_state](../data/H/app/3_invalid_state.png) Cất cánh lần hai: `rejected: invalid_state`, nguồn giả (hai lệnh trước `accepted`, 48 ms và 58 ms) | ![Bay tới](../data/H/app/4_bay_toi.png) Bay tới: tới 47.398001, 8.546001, `accepted` |
 | ![Quay về](../data/H/app/5_quay_ve.png) Quay về: về nhà, độ cao 0.0 m | ![not_owner](../data/H/app/6_not_owner.png) op2 giữ quyền: lệnh của App bị `rejected: not_owner` |
 | ![Không phản hồi](../data/H/app/7_khong_phan_hoi.png) Tắt Gateway: "Không có phản hồi (quá 3 giây)" | |
 

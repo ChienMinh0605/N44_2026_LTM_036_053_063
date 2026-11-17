@@ -35,7 +35,7 @@ class TelemetrySource {
   // Giá trị mới nhất. Gọi từ luồng của vòng lặp phát, nên phải an toàn đa luồng.
   virtual TelemetrySnapshot latest() = 0;
   // Thực hiện lệnh. Trả về chuỗi rỗng nếu chấp nhận, ngược lại là lý do từ chối
-  // (ví dụ "invalid_state", "out_of_range"). Gọi từ luồng xử lý lệnh.
+  // (ví dụ "out_of_range", "not_ready", "px4_CommandDenied"). Gọi từ luồng xử lý lệnh.
   virtual std::string execute(const DroneCommand&) { return "not_supported"; }
 };
 
