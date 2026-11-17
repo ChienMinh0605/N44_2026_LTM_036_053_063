@@ -98,10 +98,10 @@ kể cả bị từ chối, đều có ack kèm lý do. Chi tiết: [`docs/comma
 
 ## Yêu cầu và cài đặt
 
-- Ubuntu 22.04 (hoặc WSL2), CMake ≥ 3.16, trình biên dịch C++17
+- Ubuntu 22.04 hoặc 24.04 (hoặc WSL2), CMake ≥ 3.16, trình biên dịch C++17
 - Paho MQTT C/C++, nlohmann-json, Docker (Broker dùng image `eclipse-mosquitto:2.1.2-alpine`)
 - MAVSDK C++ (đã build với bản 3.17.5) cho Gateway
-- PX4-Autopilot (SITL) + Gazebo, QGroundControl
+- PX4-Autopilot v1.17.0 (SITL) + Gazebo Harmonic, QGroundControl
 - Flutter cho App (xem [`app/README.md`](app/README.md))
 
 ```bash
@@ -121,7 +121,8 @@ cmake -B build && cmake --build build -j
 ctest --test-dir build                 # test 4 kiểm tra lệnh, không cần Broker hay PX4
 
 ./scripts/setup_broker.sh              # dựng Broker 172.28.0.10:1883, tài khoản drone/drone123
-# chạy PX4 SITL trong terminal khác; Gateway chờ PX4 tối đa 10 s
+# terminal khác: chạy drone mô phỏng (Gateway chờ PX4 tối đa 10 s)
+#   cd ~/PX4-Autopilot && make px4_sitl gz_x500
 ./build/logger/logger --qos 1 --out data/thu
 ./build/gateway/gateway --qos 1 --out data/thu
 ./scripts/netem.sh N1                  # đặt điều kiện mạng: N0 | N1 | N2 | N3 | show (cần sudo)
