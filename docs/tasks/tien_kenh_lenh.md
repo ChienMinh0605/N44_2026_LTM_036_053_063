@@ -67,8 +67,8 @@ cách đang khoá ô tích topic.
 ### Xong khi
 
 - Bấm **Hạ cánh**: ack `accepted`, độ cao trên app giảm dần về 0 (khoảng 13 giây).
-- Bấm **Cất cánh** (15 m): độ cao tăng tới 15 m. Bấm **Cất cánh** lần nữa khi đang bay:
-  `rejected: invalid_state`.
+- Bấm **Cất cánh** (15 m): độ cao tăng tới 15 m. Nhập độ cao 200 rồi bấm **Cất cánh**:
+  `rejected: out_of_range` (Gateway chỉ nhận 1–120 m).
 - Bấm **Bay tới**: vị trí và tốc độ thay đổi; tới nơi tốc độ về gần 0.
 - Bấm **Quay về**: drone bay về `47.3977, 8.5456` rồi tự hạ cánh.
 - Chạy cùng lúc `./build/commander/commander --action hold --from op2` trong khi App vừa gửi lệnh:

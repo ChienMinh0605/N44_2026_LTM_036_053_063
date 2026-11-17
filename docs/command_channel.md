@@ -52,10 +52,9 @@ Người điều khiển (App / commander) ──drone/001/cmd──▶ Broker �
 | `duplicate` | đã nhận lệnh có cùng `from` + `cmd_id` (kiểm tra 3) |
 | `not_owner` | người khác đang giữ quyền điều khiển (kiểm tra 4) |
 | `invalid` | JSON sai hoặc thiếu trường |
-| `invalid_state` | lệnh không hợp lúc này (cất cánh khi đang bay, hạ cánh khi đã ở đất...) |
-| `out_of_range` | độ cao ngoài 1–120 m hoặc điểm `goto` cách nhà quá 1 km |
+| `out_of_range` | độ cao của `takeoff` hoặc `goto` ngoài 1–120 m |
 | `not_ready` | Gateway chưa nối được PX4, hoặc chờ 2 s vẫn chưa có tin vị trí đầu tiên (chưa biết độ cao hiện tại) |
-| `px4_...` | PX4 từ chối (chỉ khi chạy với PX4 thật) |
+| `px4_...` | PX4 từ chối hoặc không thực hiện được lệnh, ví dụ `px4_CommandDenied`. Gateway không tự kiểm tra trạng thái bay (cất cánh khi đang bay...) hay khoảng cách điểm `goto`, mà để PX4 quyết định |
 
 ## Bốn kiểm tra an toàn của Gateway
 

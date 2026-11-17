@@ -7,7 +7,7 @@
 //   flutter test test/cmd_channel_live_test.dart --dart-define=LIVE=true
 //
 // Kiểm tra các tiêu chí "Xong khi" trong docs/tasks/tien_kenh_lenh.md:
-// hạ cánh, cất cánh 15 m, cất cánh lần hai bị invalid_state, bay tới, quay về,
+// hạ cánh, cất cánh 15 m, cất cánh 200 m bị out_of_range, bay tới, quay về,
 // tranh quyền với commander op2 (not_owner), và "Không có phản hồi" khi Gateway tắt.
 import 'dart:io';
 
@@ -83,13 +83,17 @@ void main() {
     debugPrint('  độ cao sau khi chạm đất: ${await waitAltitude((a) => a < 0.2, 20000)}');
     expect(altitude(), lessThan(0.2));
 
-    // 2. Cất cánh 15 m, rồi cất cánh lần nữa khi đang bay -> invalid_state
-    await tester.enterText(find.widgetWithText(TextField, 'Độ cao (m)'), '15');
+    // 2. Cất cánh 15 m; rồi cất cánh 200 m -> out_of_range (Gateway chỉ nhận 1–120 m).
+    // Gateway không tự kiểm tra trạng thái bay (cất cánh khi đang bay), việc đó để PX4 quyết định.
+    final altField = find.widgetWithText(TextField, 'Độ cao (m)');
+    await tester.enterText(altField, '15');
     await tap('Cất cánh');
     expect(await waitResult(), 'accepted');
     await wait(1000);
+    await tester.enterText(altField, '200');
     await tap('Cất cánh');
-    expect(await waitResult(), 'rejected: invalid_state');
+    expect(await waitResult(), 'rejected: out_of_range');
+    await tester.enterText(altField, '15');
     debugPrint('  độ cao sau cất cánh: ${await waitAltitude((a) => a > 14.5, 20000)}');
     expect(altitude(), greaterThan(14.5));
 
