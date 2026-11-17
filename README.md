@@ -35,8 +35,8 @@ sudo usermod -aG docker $USER   # đăng xuất rồi vào lại để dùng doc
 Nếu `apt` không có `libpaho-mqttpp-dev`, build Paho từ mã nguồn theo hướng dẫn ở
 github.com/eclipse-paho/paho.mqtt.cpp.
 
-Chỉ máy chạy drone: cài PX4 + Gazebo, QGroundControl, và MAVSDK C++ (gói `.deb` cho
-Ubuntu 22.04 trên trang Releases của github.com/mavlink/MAVSDK, cài bằng `sudo dpkg -i`).
+Máy build Gateway cần MAVSDK C++ (gói `.deb` trên trang Releases của github.com/mavlink/MAVSDK,
+cài bằng `sudo dpkg -i`). Máy chạy drone cài thêm PX4 + Gazebo và QGroundControl.
 
 ## Build
 
@@ -45,19 +45,15 @@ cmake -B build
 cmake --build build -j
 ```
 
-Máy không cài MAVSDK vẫn build được Gateway, chỉ chạy được `--source fake` (dữ liệu giả,
-đủ cho mọi thí nghiệm). Máy có MAVSDK thì chạy được thêm `--source px4`.
-
-```bash
-./build/gateway/gateway --source fake --qos 1 --out data/thu   # chạy thử, Ctrl+C để dừng
-```
+Gateway đọc dữ liệu từ PX4 SITL qua MAVLink/UDP 14540, nên PX4 phải chạy trước Gateway
+(Gateway chờ PX4 tối đa 10 s). Các script thí nghiệm trong `scripts/` cũng cần PX4 đang chạy.
 
 ## Chạy
 
 ```bash
 ./scripts/setup_broker.sh            # dựng Broker 172.28.0.10:1883, tài khoản drone/drone123
 ./build/logger/logger --qos 1
-./build/gateway/gateway --source px4 --qos 1   # hoặc --source fake nếu không có PX4
+./build/gateway/gateway --qos 1   # PX4 SITL phải đang chạy
 ./scripts/netem.sh N1                # đặt điều kiện mạng: N0 | N1 | N2 | N3 | show
 ./build/commander/commander --action takeoff --alt 15   # gửi lệnh điều khiển, xem docs/command_channel.md
 ```

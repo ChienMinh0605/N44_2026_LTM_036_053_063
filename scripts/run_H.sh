@@ -24,7 +24,7 @@ MQTT=(-h "$BROKER_IP" -u drone -P drone123)
 GW_PID=""
 start_gw() {  # start_gw <thư mục> [tham số thêm...]
   local d="$1"; shift
-  "$GW" --source fake --out "$d" "$@" >>"$d/gateway.log" 2>&1 &
+  "$GW" --out "$d" "$@" >>"$d/gateway.log" 2>&1 &
   GW_PID=$!
   sleep 1.5  # chờ Gateway kết nối và subscribe drone/001/cmd
 }

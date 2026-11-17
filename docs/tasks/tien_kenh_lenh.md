@@ -9,7 +9,7 @@ Chạy thử Gateway trên máy Linux:
 ```bash
 cmake -B build && cmake --build build -j
 ./scripts/setup_broker.sh
-./build/gateway/gateway --source fake --out /tmp/cmd     # drone giả lập, đang hover 25,5 m
+./build/gateway/gateway --out /tmp/cmd                   # PX4 SITL phải đang chạy
 ```
 
 ---
@@ -90,7 +90,7 @@ một thư mục `data/H/<tên>/`.
 
 ```bash
 D=data/H/N2_qos1_run1
-./build/gateway/gateway --source fake --out $D &         # Terminal 1, hoặc chạy nền như dòng này
+./build/gateway/gateway --out $D &                       # Terminal 1, hoặc chạy nền như dòng này
 ./scripts/netem.sh N2
 ./build/commander/commander --action hold --count 300 --interval-ms 200 --qos 1 \
     --scenario N2 --run 1 --out $D
@@ -108,11 +108,11 @@ xác định là do thuật toán Nagle của TCP gặp delayed ACK (Paho và Mo
 ### H2 – Lệnh tới muộn (cảnh demo chính)
 
 ```bash
-./build/gateway/gateway --source fake --out data/H/h2_on      # chạy 3 giây rồi Ctrl+C
+./build/gateway/gateway --out data/H/h2_on      # chạy 3 giây rồi Ctrl+C
 ./build/commander/commander --action goto --lat 47.3980 --lon 8.5460 --wait-ms 1000
 #   (Gateway đang tắt nên commander báo timeout; Broker giữ lệnh lại)
 #   đợi 10 giây
-./build/gateway/gateway --source fake --out data/H/h2_on      # bật lại: lệnh bị expired, drone đứng yên
+./build/gateway/gateway --out data/H/h2_on      # bật lại: lệnh bị expired, drone đứng yên
 ```
 
 Làm lại y hệt với `--cmd-safety off` ở cả hai lần bật Gateway, thư mục `data/H/h2_off`: lệnh được
@@ -123,7 +123,7 @@ chấp nhận sau ~10 giây, drone bay đi. Mỗi trường hợp 3 lần. Nên 
 ### H3 – Lệnh trùng khi Broker khởi động lại (chưa thử, nếu số liệu lạ thì báo Chiến)
 
 ```bash
-./build/gateway/gateway --source fake --out data/H/h3_run1 &
+./build/gateway/gateway --out data/H/h3_run1 &
 ./build/commander/commander --action hold --count 100 --interval-ms 200 --qos 1 --out data/H/h3_run1 &
 sleep 5; docker stop broker; sleep 5; docker start broker
 ```

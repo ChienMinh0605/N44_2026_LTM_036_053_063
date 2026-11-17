@@ -2,7 +2,7 @@
 //
 // Chuẩn bị (ở thư mục gốc repo):
 //   ./scripts/setup_broker.sh
-//   ./build/gateway/gateway --source fake --out /tmp/cmd &
+//   ./build/gateway/gateway --out /tmp/cmd &   (PX4 SITL đang chạy)
 // Chạy (trong app/):
 //   flutter test test/cmd_channel_live_test.dart --dart-define=LIVE=true
 //

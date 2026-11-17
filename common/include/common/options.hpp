@@ -1,7 +1,6 @@
 // Tham số dòng lệnh chung cho Gateway và Logger, để script thí nghiệm
 // điều khiển được mà không phải sửa code (mục 5 của kế hoạch).
 //
-//   --source px4|fake   (Gateway) lấy dữ liệu từ PX4 hay sinh dữ liệu giả
 //   --qos 0|1           mức QoS khi publish / subscribe
 //   --buffer on|off     (Gateway) bật/tắt bộ đệm khi mất kết nối
 //   --cmd-safety on|off (Gateway) bật/tắt 4 kiểm tra an toàn của kênh lệnh (tắt chỉ để làm thí nghiệm H)
@@ -18,7 +17,6 @@
 namespace px4mqtt {
 
 struct Options {
-  std::string source = "px4";
   int qos = 1;
   bool buffer = true;
   bool cmd_safety = true;
@@ -30,7 +28,7 @@ struct Options {
 
 inline void print_usage(const char* prog) {
   std::cerr << "Cach dung: " << prog
-            << " [--source px4|fake] [--qos 0|1] [--buffer on|off] [--cmd-safety on|off] [--clean]"
+            << " [--qos 0|1] [--buffer on|off] [--cmd-safety on|off] [--clean]"
                " [--scenario N0] [--run 1] [--out data]\n";
 }
 
@@ -46,9 +44,7 @@ inline Options parse_options(int argc, char** argv) {
       }
       return argv[++i];
     };
-    if (a == "--source") {
-      o.source = next();
-    } else if (a == "--qos") {
+    if (a == "--qos") {
       o.qos = std::stoi(next());
     } else if (a == "--buffer") {
       o.buffer = (next() == "on");
@@ -68,7 +64,7 @@ inline Options parse_options(int argc, char** argv) {
       std::exit(2);
     }
   }
-  if ((o.qos != 0 && o.qos != 1) || (o.source != "px4" && o.source != "fake")) {
+  if (o.qos != 0 && o.qos != 1) {
     print_usage(argv[0]);
     std::exit(2);
   }

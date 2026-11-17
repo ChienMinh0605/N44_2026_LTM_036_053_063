@@ -1,6 +1,6 @@
-// Gateway: lấy telemetry (PX4 thật hoặc dữ liệu giả) -> JSON -> MQTT.
+// Gateway: lấy telemetry từ PX4 (MAVLink, qua MAVSDK) -> JSON -> MQTT.
 //
-//   ./build/gateway/gateway --source fake --qos 1 --buffer on --scenario N0 --run 1 --out data/E/N0_qos1_run1
+//   ./build/gateway/gateway --qos 1 --buffer on --scenario N0 --run 1 --out data/E/N0_qos1_run1
 //
 // Mỗi 200 ms phát 4 topic (position, altitude, velocity, battery) = 20 tin/giây.
 // Mỗi tin ghi một dòng sent.csv để đối chiếu với logger.csv khi tính tỷ lệ nhận.
@@ -13,7 +13,7 @@
 //
 // Chia việc:
 //   - Nguồn PX4 (px4_source.cpp): người có máy chạy PX4.
-//   - Phần MQTT: common/mqtt_link (Chiến). Vòng lặp phát và nguồn giả: file này, fake_source.cpp.
+//   - Phần MQTT: common/mqtt_link (Chiến). Vòng lặp phát: file này.
 
 #include <array>
 #include <atomic>
@@ -50,12 +50,7 @@ int main(int argc, char** argv) {
   const int64_t boot_id = now_ms();
 
   // 1. Nguồn dữ liệu
-  std::unique_ptr<TelemetrySource> source =
-      opt.source == "px4" ? make_px4_source(kMavlinkUrl) : make_fake_source();
-  if (!source) {
-    std::cerr << "Gateway nay duoc build khong co MAVSDK, chi chay duoc --source fake\n";
-    return 1;
-  }
+  std::unique_ptr<TelemetrySource> source = make_px4_source(kMavlinkUrl);
   if (!source->start()) return 1;
 
   // 2. Kết nối MQTT (bộ đệm, Last Will, tự kết nối lại đều nằm trong MqttLink)
@@ -113,7 +108,7 @@ int main(int argc, char** argv) {
 
   CsvWriter sent(opt.out_dir + "/sent.csv", "boot_id,topic,seq,qos,timestamp_ms,status");
 
-  std::cout << "Gateway boot_id=" << boot_id << " source=" << opt.source << " qos=" << opt.qos
+  std::cout << "Gateway boot_id=" << boot_id << " qos=" << opt.qos
             << " buffer=" << (opt.buffer ? "on" : "off")
             << " cmd-safety=" << (opt.cmd_safety ? "on" : "off") << " scenario=" << opt.scenario
             << " run=" << opt.run << " -> " << opt.out_dir << "\n";

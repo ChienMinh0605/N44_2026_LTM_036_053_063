@@ -58,7 +58,7 @@ one_run() {
   local d="$1" qos="$2" buf="$3" sc="$4" run="$5" fail="$6" recover="$7"
   start_logger "$d" "$qos" "$sc" "$run"
   sleep 3
-  "$GW" --source fake --qos "$qos" --buffer "$buf" --scenario "$sc" --run "$run" --out "$d" \
+  "$GW" --qos "$qos" --buffer "$buf" --scenario "$sc" --run "$run" --out "$d" \
     >>"$d/gateway.log" 2>&1 &
   GW_PID=$!
   local t0=$SECONDS

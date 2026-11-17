@@ -10,10 +10,16 @@
 
 using namespace px4mqtt;
 
+// Drone thay cho PX4 trong test: lệnh nào qua được 4 kiểm tra cũng thực hiện được.
+struct AcceptAll : TelemetrySource {
+  bool start() override { return true; }
+  TelemetrySnapshot latest() override { return {}; }
+  std::string execute(const DroneCommand&) override { return ""; }
+};
+
 int main() {
-  auto drone = make_fake_source();  // drone giả bắt đầu ở trạng thái đang bay, "hold" luôn hợp lệ
-  drone->start();
-  CommandHandler h(true, *drone);
+  AcceptAll drone;
+  CommandHandler h(true, drone);
   const int64_t t = 1'000'000;
   auto cmd = [](const std::string& from, int id, int64_t sent) {
     return R"({"from":")" + from + R"(","cmd_id":)" + std::to_string(id) +
@@ -35,7 +41,7 @@ int main() {
   const std::string line = h.handle(cmd("a,b", 7, t), t, false, false).log_line;
   assert(std::count(line.begin(), line.end(), ',') == 9);
 
-  CommandHandler unsafe(false, *drone);  // tắt kiểm tra (thí nghiệm H): lệnh retained vẫn chạy
+  CommandHandler unsafe(false, drone);  // tắt kiểm tra (thí nghiệm H): lệnh retained vẫn chạy
   assert(unsafe.handle(cmd("op1", 9, t), t, true, false).ack["reason"] == "");
   return 0;
 }

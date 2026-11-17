@@ -1,6 +1,6 @@
 # Thí nghiệm A, B, D (phần của Tiên)
 
-Chạy trên một máy Linux: Broker Mosquitto (Docker, 172.28.0.10), Gateway `--source fake` (4 topic × 5 tin/s
+Chạy trên một máy Linux: Broker Mosquitto (Docker, 172.28.0.10), Gateway (4 topic × 5 tin/s
 = 20 tin/s), App Flutter (Linux desktop) và Logger C++. Ảnh chụp trong `data/A`, `data/B`, `data/D`.
 
 ## A – Tắt một client, client còn lại vẫn nhận

@@ -94,7 +94,7 @@ int main(int argc,char**argv){
     std::string out=dir.string();
     guard.logger=spawn({logger.string(),"--qos",qos,"--scenario",scenario,"--run",run,"--out",out},dir/"logger.log");
     wait_for(3,guard.logger);
-    guard.gateway=spawn({gateway.string(),"--source","fake","--qos",qos,"--buffer","on","--scenario",scenario,"--run",run,"--out",out},dir/"gateway.log");
+    guard.gateway=spawn({gateway.string(),"--qos",qos,"--buffer","on","--scenario",scenario,"--run",run,"--out",out},dir/"gateway.log");
     // Step 6: 180 seconds publisher; logger remains running 15 sec after gateway stops
     wait_for(180,guard.logger,guard.gateway);
     stop_child(guard.gateway);

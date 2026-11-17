@@ -25,14 +25,8 @@ add_subdirectory(common)
 add_subdirectory(logger)
 add_subdirectory(commander)  # gửi lệnh điều khiển, đo khứ hồi (thí nghiệm H)
 
-# MAVSDK không bắt buộc: máy không cài vẫn build được Gateway, chỉ thiếu --source px4
-# (vẫn chạy được --source fake, đủ cho mọi thí nghiệm).
-find_package(MAVSDK QUIET)
-if(MAVSDK_FOUND)
-  message(STATUS "Tìm thấy MAVSDK: Gateway hỗ trợ --source px4")
-else()
-  message(STATUS "Không có MAVSDK: Gateway chỉ hỗ trợ --source fake")
-endif()
+# Gateway đọc PX4 qua MAVSDK (đã build với MAVSDK 3.17.5)
+find_package(MAVSDK REQUIRED)
 add_subdirectory(gateway)
 
 # Cong cu phan B (khong sua Gateway / Logger)

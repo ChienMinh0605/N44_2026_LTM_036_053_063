@@ -1,7 +1,5 @@
-// Nguồn dữ liệu của Gateway. Vòng lặp phát chỉ cần hỏi "giá trị mới nhất là gì",
-// không cần biết dữ liệu đến từ PX4 thật hay được sinh giả.
-//   - FakeSource (fake_source.cpp): drone đứng yên (hover), pin hao dần. Dùng cho thí nghiệm.
-//   - Px4Source  (px4_source.cpp): đọc MAVLink qua MAVSDK. Chỉ có khi build với MAVSDK.
+// Nguồn dữ liệu của Gateway. Vòng lặp phát chỉ cần hỏi "giá trị mới nhất là gì".
+//   - Px4Source (px4_source.cpp): đọc MAVLink từ PX4 qua MAVSDK.
 #pragma once
 
 #include <cmath>
@@ -41,9 +39,6 @@ class TelemetrySource {
   virtual std::string execute(const DroneCommand&) { return "not_supported"; }
 };
 
-std::unique_ptr<TelemetrySource> make_fake_source();
-
-// Trả về nullptr nếu Gateway được build không có MAVSDK.
 std::unique_ptr<TelemetrySource> make_px4_source(const std::string& mavlink_url);
 
 }  // namespace px4mqtt

@@ -1,6 +1,6 @@
 # Thí nghiệm E – QoS 0 và QoS 1 khi mạng xấu
 
-Chạy trên một máy Linux: Broker Mosquitto (Docker, 172.28.0.10), Gateway `--source fake` (4 topic × 5 tin/s
+Chạy trên một máy Linux: Broker Mosquitto (Docker, 172.28.0.10), Gateway (4 topic × 5 tin/s
 = 20 tin/s), Logger C++ cùng máy với Gateway (chung đồng hồ, nên độ trễ đo được là thật).
 2 QoS × 4 điều kiện mạng × 3 lần = **24 lượt**, mỗi lượt Gateway phát 180 s, Logger nhận thêm 15 s.
 QoS chạy xen kẽ: lần 1 và 3 chạy QoS 0 trước, lần 2 chạy QoS 1 trước.

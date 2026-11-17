@@ -1,14 +1,9 @@
-// Nguồn dữ liệu PX4 thật qua MAVSDK (phần của người có máy chạy PX4).
-//
-// LƯU Ý: bản này viết theo API MAVSDK v2 nhưng CHƯA được build thử, vì máy viết nó
-// không cài MAVSDK. Người có MAVSDK build và sửa nếu tên hàm lệch phiên bản.
+// Nguồn dữ liệu PX4 qua MAVSDK (build với MAVSDK 3.17.5).
 //
 // Nguyên tắc (mục 2 kế hoạch): callback của MAVSDK chạy ở luồng khác, chỉ ghi đè
 // "giá trị mới nhất" có mutex; việc publish do timer 200 ms của Gateway làm.
 
 #include "telemetry_source.hpp"
-
-#ifdef HAVE_MAVSDK
 
 #include <chrono>
 #include <cmath>
@@ -70,7 +65,7 @@ class Px4Source : public TelemetrySource {
     return true;
   }
 
-  // Kênh lệnh -> MAVSDK Action (CHƯA build thử: máy viết code không có MAVSDK).
+  // Kênh lệnh -> MAVSDK Action.
   // Các hàm Action ở đây là bản đồng bộ, chờ PX4 trả lời (thường dưới 1 giây).
   std::string execute(const DroneCommand& c) override {
     using mavsdk::Action;
@@ -131,11 +126,3 @@ std::unique_ptr<TelemetrySource> make_px4_source(const std::string& mavlink_url)
 }
 
 }  // namespace px4mqtt
-
-#else  // không có MAVSDK
-
-namespace px4mqtt {
-std::unique_ptr<TelemetrySource> make_px4_source(const std::string&) { return nullptr; }
-}  // namespace px4mqtt
-
-#endif

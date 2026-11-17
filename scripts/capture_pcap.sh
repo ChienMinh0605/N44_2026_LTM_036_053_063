@@ -39,7 +39,7 @@ scene() {
   cap_start "$1"
   $LG --qos "$2" --out "$TMP/$1" >/dev/null 2>&1 & local lg=$!
   sleep 1
-  $GW --source fake --qos "$2" --out "$TMP/$1" >/dev/null 2>&1 & local gw=$!
+  $GW --qos "$2" --out "$TMP/$1" >/dev/null 2>&1 & local gw=$!
   sleep "$3"
   kill -"$4" $gw; wait $gw 2>/dev/null || true
   sleep 2  # đủ để Broker phát Last Will (khi KILL) tới Logger

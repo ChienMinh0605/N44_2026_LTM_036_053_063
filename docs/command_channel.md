@@ -74,7 +74,7 @@ Gateway ghi mọi lệnh vào `cmd_log.csv`:
 ## Cách thử
 
 ```bash
-./build/gateway/gateway --source fake --out /tmp/cmd          # drone giả lập, đang hover 25,5 m
+./build/gateway/gateway --out /tmp/cmd                        # PX4 SITL phải đang chạy
 ./build/commander/commander --action land                      # hạ cánh
 ./build/commander/commander --action takeoff --alt 15          # cất cánh lên 15 m
 ./build/commander/commander --action goto --lat 47.3980 --lon 8.5460

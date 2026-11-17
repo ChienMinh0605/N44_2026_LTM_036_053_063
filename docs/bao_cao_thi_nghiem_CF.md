@@ -1,6 +1,6 @@
 # Thí nghiệm C và F
 
-Chạy trên một máy Linux: Broker Mosquitto (Docker, 172.28.0.10), Gateway `--source fake` (4 topic × 5 tin/s
+Chạy trên một máy Linux: Broker Mosquitto (Docker, 172.28.0.10), Gateway (4 topic × 5 tin/s
 = 20 tin/s), Logger C++. Mỗi lượt Gateway phát 180 s, sự cố ở giây thứ 60, kéo dài 15 s; Logger chạy trước
 3 s, nhận thêm 15 s sau khi Gateway dừng, và được xoá phiên cũ trước mỗi lượt. Mỗi trường hợp 3 lần, thứ tự
 hai mức đảo giữa các lần.

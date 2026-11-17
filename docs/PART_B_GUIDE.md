@@ -9,8 +9,6 @@ Phần B theo `Ke_hoach_lam_viec_PX4_MQTT.docx`:
 3. `scripts/analyze.cpp`: đọc `sent.csv` + `logger.csv`, tính tỷ lệ nhận, trùng tin, median, p95, trung bình ± độ lệch chuẩn, xuất `per_run.csv`, `summary.csv`, `cdf.svg`, `receive_rate.svg`.
 4. Nội dung cơ sở lý thuyết / báo cáo ở cuối file.
 
-Muốn có dữ liệu giả để thử app thì dùng `./build/gateway/gateway --source fake` (nhận được cả lệnh điều khiển).
-
 **Không chỉnh sửa `common/`, `gateway/`, `logger/`, `app/` của các thành viên.** File `CMakeLists.txt` ở root chỉ được thêm `add_subdirectory(scripts)`.
 
 ## A. Build trên Windows
@@ -57,7 +55,7 @@ Trình chạy sẽ tự thực hiện:
 1. `netem.sh N0` kiểm tra Broker và reset, tự lấy PID mới.
 2. Logger `--clean`: xóa phiên MQTT trước khi đặt netem.
 3. `netem.sh N1`: áp dụng netem, `show`: xác nhận. Ping 50 gói và lưu `ping.txt`.
-4. Logger chạy trước Gateway 3 giây (để subscribe). Gateway chạy `--source fake --qos 1 --buffer on --scenario N1 --run 2`.
+4. Logger chạy trước Gateway 3 giây (để subscribe). Gateway chạy `--qos 1 --buffer on --scenario N1 --run 2` (PX4 SITL phải đang chạy).
 5. Gateway chạy 180 giây, dừng bằng SIGINT, Logger chạy thêm 15 giây rồi dừng.
 6. Reset N0 kể cả khi có lỗi. Lưu `sent.csv`, `events.csv`, `logger.csv`, `gateway.log`, `logger.log`, `ping.txt`, `netem*.txt`, `scenario.txt`.
 
@@ -109,7 +107,7 @@ Các file:
 ## E. Dàn ý báo cáo B
 
 1. MQTT: kiến trúc publisher/broker/subscriber, topic, MQTT 3.1.1, retain, Last Will, QoS 0/1, TCP retransmission.
-2. Bộ thí nghiệm: Broker Docker IP cố định, `netem` trên eth0 Broker, **chỉ ảnh hưởng chiều Broker → client / PUBACK**, hover / fake source, mỗi topic 5 Hz, 4 topic, Logger cùng máy Gateway để đo độ trễ.
+2. Bộ thí nghiệm: Broker Docker IP cố định, `netem` trên eth0 Broker, **chỉ ảnh hưởng chiều Broker → client / PUBACK**, drone hover, mỗi topic 5 Hz, 4 topic, Logger cùng máy Gateway để đo độ trễ.
 3. Thiết kế E: 2 QoS × 4 điều kiện N0–N3 × 3 lần = 24 lượt; 180 giây/lượt, Logger nhận thêm 15 giây, bỏ 10 giây đầu.
 4. Chỉ số: tỷ lệ nhận duy nhất, số tin trùng, median, p95, CDF; thống kê trung bình ± SD 3 lượt.
 5. Chèn `summary.csv`, `receive_rate.svg`, `cdf.svg`, hình chụp Wireshark; kết luận **chỉ sau khi chạy số liệu thật**. MQTT trên TCP có thể làm tăng độ trễ khi mạng mất gói thay vì mất bản tin ứng dụng trực tiếp.

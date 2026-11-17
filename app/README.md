@@ -35,6 +35,6 @@ Giao thức: `docs/command_channel.md`. App gửi lệnh lên `drone/001/cmd` (Q
 Test với Broker và Gateway thật (lái App qua các tình huống trong `docs/tasks/tien_kenh_lenh.md`):
 
 ```bash
-./build/gateway/gateway --source fake --out /tmp/cmd &      # ở thư mục gốc repo
+./build/gateway/gateway --out /tmp/cmd &      # ở thư mục gốc repo, PX4 SITL đang chạy
 cd app && flutter test test/cmd_channel_live_test.dart --dart-define=LIVE=true
 ```

@@ -45,7 +45,7 @@ Dòng "Đang giữ quyền" lấy từ trường `owner` của mọi ack.
 | Quay về | drone về 47.397700, 8.545600 rồi hạ cánh |
 | Tắt Gateway rồi gửi lệnh | "Không có phản hồi (quá 3 giây)" |
 
-Ảnh chụp màn hình App trên Linux desktop, Gateway `--source fake`:
+Ảnh chụp màn hình App trên Linux desktop:
 
 | | |
 |---|---|
@@ -56,7 +56,7 @@ Dòng "Đang giữ quyền" lấy từ trường `owner` của mọi ack.
 
 ## 4. Kết quả thí nghiệm H
 
-Broker, Gateway (`--source fake`) và `commander` chạy cùng một máy Linux, chung đồng hồ.
+Broker, Gateway và `commander` chạy cùng một máy Linux, chung đồng hồ.
 
 ### H1 – Thời gian khứ hồi lệnh (300 lệnh `hold` mỗi lượt, cách nhau 200 ms, 3 lượt mỗi ô)
 
