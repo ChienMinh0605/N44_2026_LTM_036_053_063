@@ -1,1 +1,1 @@
-qdisc netem 8003: root refcnt 17 limit 1000 loss 5%
+qdisc netem 8004: root refcnt 17 limit 1000 loss 5%

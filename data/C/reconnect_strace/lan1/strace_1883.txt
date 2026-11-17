@@ -1,0 +1,8 @@
+425401 22:26:22.506629 connect(7, {sa_family=AF_INET, sin_port=htons(1883), sin_addr=inet_addr("172.28.0.10")}, 16) = -1 EINPROGRESS (Operation now in progress)
+425402 22:26:22.517708 getsockopt(7, SOL_SOCKET, SO_ERROR, [0], [4]) = 0
+425401 22:26:31.520092 connect(7, {sa_family=AF_INET, sin_port=htons(1883), sin_addr=inet_addr("172.28.0.10")}, 16) = -1 EINPROGRESS (Operation now in progress)
+425402 22:26:34.575473 getsockopt(7, SOL_SOCKET, SO_ERROR, [EHOSTUNREACH], [4]) = 0
+425401 22:26:37.520167 connect(7, {sa_family=AF_INET, sin_port=htons(1883), sin_addr=inet_addr("172.28.0.10")}, 16) = -1 EINPROGRESS (Operation now in progress)
+425402 22:26:40.592441 getsockopt(7, SOL_SOCKET, SO_ERROR, [EHOSTUNREACH], [4]) = 0
+425401 22:26:46.719994 connect(7, {sa_family=AF_INET, sin_port=htons(1883), sin_addr=inet_addr("172.28.0.10")}, 16) = -1 EINPROGRESS (Operation now in progress)
+425402 22:26:47.801672 getsockopt(7, SOL_SOCKET, SO_ERROR, [0], [4]) = 0

@@ -11,5 +11,5 @@ PING 172.28.0.10 (172.28.0.10) 56(84) bytes of data.
 64 bytes from 172.28.0.10: icmp_seq=10 ttl=64 time=100 ms
 
 --- 172.28.0.10 ping statistics ---
-10 packets transmitted, 10 received, 0% packet loss, time 1808ms
-rtt min/avg/max/mdev = 100.268/100.303/100.348/0.020 ms
+10 packets transmitted, 10 received, 0% packet loss, time 1798ms
+rtt min/avg/max/mdev = 100.027/100.037/100.054/0.009 ms

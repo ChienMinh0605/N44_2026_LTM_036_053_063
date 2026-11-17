@@ -1,112 +1,178 @@
-Gateway boot_id=1794646986683 source=fake qos=1 buffer=on cmd-safety=on scenario=h3 run=3 -> data/H/h3_run3
+[34m[10:25:08|Info ] [0mMAVSDK version: v3.17.5 (mavsdk_impl.cpp:35)
+Dang cho PX4 tren udpin://0.0.0.0:14540 ...
+[34m[10:25:08|Info ] [0mNew system on: 127.0.0.1:14580 (system ID: 1) (udp_connection.cpp:263)
+[32m[10:25:08|Debug] [0mComponent Autopilot (component ID: 1) added. (system_impl.cpp:508)
+[32m[10:25:09|Debug] [0mDiscovered 1 component (system_impl.cpp:628)
+Gateway boot_id=1794929108913 qos=1 buffer=on cmd-safety=on scenario=h3 run=3 -> data/H/h3_run3
 [gateway-01] connect_attempt: tcp://172.28.0.10:1883
 [gateway-01] connected: connect onSuccess called
-lenh: 1794646988297,op1,1794646988297,hold,1794646988297,0,0,0,accepted,
-lenh: 1794646988498,op1,1794646988298,hold,1794646988497,1,0,0,accepted,
-lenh: 1794646988698,op1,1794646988299,hold,1794646988697,1,0,0,accepted,
-lenh: 1794646988897,op1,1794646988300,hold,1794646988897,0,0,0,accepted,
-lenh: 1794646989098,op1,1794646988301,hold,1794646989097,1,0,0,accepted,
-lenh: 1794646989297,op1,1794646988302,hold,1794646989297,0,0,0,accepted,
-lenh: 1794646989497,op1,1794646988303,hold,1794646989497,0,0,0,accepted,
-lenh: 1794646989697,op1,1794646988304,hold,1794646989697,0,0,0,accepted,
-lenh: 1794646989897,op1,1794646988305,hold,1794646989897,0,0,0,accepted,
-lenh: 1794646990097,op1,1794646988306,hold,1794646990097,0,0,0,accepted,
-lenh: 1794646990297,op1,1794646988307,hold,1794646990297,0,0,0,accepted,
-lenh: 1794646990497,op1,1794646988308,hold,1794646990497,0,0,0,accepted,
-lenh: 1794646990697,op1,1794646988309,hold,1794646990697,0,0,0,accepted,
-lenh: 1794646990897,op1,1794646988310,hold,1794646990897,0,0,0,accepted,
-lenh: 1794646991097,op1,1794646988311,hold,1794646991097,0,0,0,accepted,
-lenh: 1794646991297,op1,1794646988312,hold,1794646991297,0,0,0,accepted,
-lenh: 1794646991498,op1,1794646988313,hold,1794646991497,1,0,0,accepted,
-lenh: 1794646991697,op1,1794646988314,hold,1794646991697,0,0,0,accepted,
-sent=104 buffered=0 dropped=0
-lenh: 1794646991897,op1,1794646988315,hold,1794646991897,0,0,0,accepted,
-lenh: 1794646992098,op1,1794646988316,hold,1794646992097,1,0,0,accepted,
-lenh: 1794646992297,op1,1794646988317,hold,1794646992297,0,0,0,accepted,
-lenh: 1794646992498,op1,1794646988318,hold,1794646992497,1,0,0,accepted,
-lenh: 1794646992698,op1,1794646988319,hold,1794646992697,1,0,0,accepted,
-lenh: 1794646992898,op1,1794646988320,hold,1794646992897,1,0,0,accepted,
-lenh: 1794646993097,op1,1794646988321,hold,1794646993097,0,0,0,accepted,
+lenh: 1794929110457,op1,1794929110427,hold,1794929110427,30,0,0,accepted,
+[33m[10:25:10|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929110656,op1,1794929110428,hold,1794929110627,29,0,0,accepted,
+[33m[10:25:10|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929110856,op1,1794929110429,hold,1794929110827,29,0,0,accepted,
+[33m[10:25:10|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929111055,op1,1794929110430,hold,1794929111027,28,0,0,accepted,
+[33m[10:25:11|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:11|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929111256,op1,1794929110431,hold,1794929111227,29,0,0,accepted,
+lenh: 1794929111457,op1,1794929110432,hold,1794929111427,30,0,0,accepted,
+[33m[10:25:11|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929111657,op1,1794929110433,hold,1794929111627,30,0,0,accepted,
+[33m[10:25:11|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929111856,op1,1794929110434,hold,1794929111827,29,0,0,accepted,
+[33m[10:25:11|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929112056,op1,1794929110435,hold,1794929112027,29,0,0,accepted,
+[33m[10:25:12|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:12|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929112256,op1,1794929110436,hold,1794929112227,29,0,0,accepted,
+lenh: 1794929112456,op1,1794929110437,hold,1794929112427,29,0,0,accepted,
+[33m[10:25:12|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929112656,op1,1794929110438,hold,1794929112627,29,0,0,accepted,
+[33m[10:25:12|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929112856,op1,1794929110439,hold,1794929112827,29,0,0,accepted,
+[33m[10:25:12|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:13|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929113056,op1,1794929110440,hold,1794929113027,29,0,0,accepted,
+lenh: 1794929113256,op1,1794929110441,hold,1794929113227,29,0,0,accepted,
+[33m[10:25:13|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929113456,op1,1794929110442,hold,1794929113427,29,0,0,accepted,
+[33m[10:25:13|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929113657,op1,1794929110443,hold,1794929113627,30,0,0,accepted,
+[33m[10:25:13|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929113856,op1,1794929110444,hold,1794929113827,29,0,0,accepted,
+[33m[10:25:13|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:14|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929114057,op1,1794929110445,hold,1794929114027,30,0,0,accepted,
+sent=100 buffered=0 dropped=0
+[33m[10:25:14|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929114256,op1,1794929110446,hold,1794929114227,29,0,0,accepted,
+lenh: 1794929114456,op1,1794929110447,hold,1794929114427,29,0,0,accepted,
+[33m[10:25:14|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929114656,op1,1794929110448,hold,1794929114627,29,0,0,accepted,
+[33m[10:25:14|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:14|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929114856,op1,1794929110449,hold,1794929114827,29,0,0,accepted,
+lenh: 1794929115056,op1,1794929110450,hold,1794929115027,29,0,0,accepted,
+[33m[10:25:15|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929115256,op1,1794929110451,hold,1794929115227,29,0,0,accepted,
+[33m[10:25:15|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
 [gateway-01] connection_lost
-sent=132 buffered=72 dropped=0  (MAT KET NOI)
+[33m[10:25:15|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929115456,op1,1794929110452,hold,1794929115427,29,0,0,accepted,
+sent=124 buffered=76 dropped=0  (MAT KET NOI)
+sent=124 buffered=176 dropped=0  (MAT KET NOI)
 [gateway-01] connected: automatic reconnect
-lenh: 1794647001506,op1,1794646988322,hold,1794646993297,8209,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988323,hold,1794646993497,8010,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988324,hold,1794646993697,7810,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988325,hold,1794646993897,7610,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988326,hold,1794646994097,7410,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988327,hold,1794646994297,7210,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988328,hold,1794646994497,7010,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988329,hold,1794646994697,6810,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988330,hold,1794646994897,6610,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988331,hold,1794646995097,6410,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988332,hold,1794646995297,6210,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988333,hold,1794646995497,6010,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988334,hold,1794646995697,5810,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988335,hold,1794646995897,5610,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988336,hold,1794646996097,5410,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988337,hold,1794646996297,5210,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988338,hold,1794646996497,5010,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988339,hold,1794646996697,4810,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988340,hold,1794646996897,4610,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988341,hold,1794646997097,4410,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988342,hold,1794646997297,4210,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988343,hold,1794646997497,4010,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988344,hold,1794646997697,3810,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988345,hold,1794646997897,3610,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988346,hold,1794646998097,3410,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988347,hold,1794646998297,3210,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988348,hold,1794646998497,3010,0,0,rejected,expired
-lenh: 1794647001507,op1,1794646988349,hold,1794646998697,2810,0,0,accepted,
-lenh: 1794647001507,op1,1794646988350,hold,1794646998897,2610,0,0,accepted,
-lenh: 1794647001507,op1,1794646988351,hold,1794646999097,2410,0,0,accepted,
-lenh: 1794647001507,op1,1794646988352,hold,1794646999297,2210,0,0,accepted,
-lenh: 1794647001507,op1,1794646988353,hold,1794646999497,2010,0,0,accepted,
-lenh: 1794647001508,op1,1794646988354,hold,1794646999697,1811,0,0,accepted,
-lenh: 1794647001508,op1,1794646988355,hold,1794646999897,1611,0,0,accepted,
-lenh: 1794647001508,op1,1794646988356,hold,1794647000097,1411,0,0,accepted,
-lenh: 1794647001508,op1,1794646988357,hold,1794647000297,1211,0,0,accepted,
-lenh: 1794647001508,op1,1794646988358,hold,1794647000497,1011,0,0,accepted,
-lenh: 1794647001508,op1,1794646988359,hold,1794647000697,811,0,0,accepted,
-lenh: 1794647001508,op1,1794646988360,hold,1794647000897,611,0,0,accepted,
-lenh: 1794647001508,op1,1794646988361,hold,1794647001097,411,0,0,accepted,
-lenh: 1794647001508,op1,1794646988362,hold,1794647001297,211,0,0,accepted,
-lenh: 1794647001508,op1,1794646988363,hold,1794647001497,11,0,0,accepted,
-lenh: 1794647001697,op1,1794646988364,hold,1794647001697,0,0,0,accepted,
-sent=172 buffered=132 dropped=0
-lenh: 1794647001897,op1,1794646988365,hold,1794647001897,0,0,0,accepted,
-lenh: 1794647002097,op1,1794646988366,hold,1794647002097,0,0,0,accepted,
-lenh: 1794647002297,op1,1794646988367,hold,1794647002297,0,0,0,accepted,
-lenh: 1794647002497,op1,1794646988368,hold,1794647002497,0,0,0,accepted,
-lenh: 1794647002697,op1,1794646988369,hold,1794647002697,0,0,0,accepted,
-lenh: 1794647002897,op1,1794646988370,hold,1794647002897,0,0,0,accepted,
-lenh: 1794647003098,op1,1794646988371,hold,1794647003097,1,0,0,accepted,
-lenh: 1794647003297,op1,1794646988372,hold,1794647003297,0,0,0,accepted,
-lenh: 1794647003498,op1,1794646988373,hold,1794647003497,1,0,0,accepted,
-lenh: 1794647003697,op1,1794646988374,hold,1794647003697,0,0,0,accepted,
-lenh: 1794647003897,op1,1794646988375,hold,1794647003897,0,0,0,accepted,
-lenh: 1794647004098,op1,1794646988376,hold,1794647004097,1,0,0,accepted,
-lenh: 1794647004297,op1,1794646988377,hold,1794647004297,0,0,0,accepted,
-lenh: 1794647004497,op1,1794646988378,hold,1794647004497,0,0,0,accepted,
-lenh: 1794647004697,op1,1794646988379,hold,1794647004697,0,0,0,accepted,
-lenh: 1794647004897,op1,1794646988380,hold,1794647004897,0,0,0,accepted,
-lenh: 1794647005097,op1,1794646988381,hold,1794647005097,0,0,0,accepted,
-lenh: 1794647005297,op1,1794646988382,hold,1794647005297,0,0,0,accepted,
-lenh: 1794647005497,op1,1794646988383,hold,1794647005497,0,0,0,accepted,
-lenh: 1794647005697,op1,1794646988384,hold,1794647005697,0,0,0,accepted,
-lenh: 1794647005897,op1,1794646988385,hold,1794647005897,0,0,0,accepted,
-lenh: 1794647006098,op1,1794646988386,hold,1794647006097,1,0,0,accepted,
-lenh: 1794647006297,op1,1794646988387,hold,1794647006297,0,0,0,accepted,
-lenh: 1794647006497,op1,1794646988388,hold,1794647006497,0,0,0,accepted,
-lenh: 1794647006697,op1,1794646988389,hold,1794647006697,0,0,0,accepted,
-sent=272 buffered=132 dropped=0
-lenh: 1794647006897,op1,1794646988390,hold,1794647006897,0,0,0,accepted,
-lenh: 1794647007097,op1,1794646988391,hold,1794647007097,0,0,0,accepted,
-lenh: 1794647007297,op1,1794646988392,hold,1794647007297,0,0,0,accepted,
-lenh: 1794647007497,op1,1794646988393,hold,1794647007497,0,0,0,accepted,
-lenh: 1794647007697,op1,1794646988394,hold,1794647007697,0,0,0,accepted,
-lenh: 1794647007897,op1,1794646988395,hold,1794647007897,0,0,0,accepted,
-lenh: 1794647008097,op1,1794646988396,hold,1794647008097,0,0,0,accepted,
+lenh: 1794929125257,op1,1794929110452,hold,1794929115427,9830,0,1,rejected,expired
+lenh: 1794929125261,op1,1794929110453,hold,1794929115627,9634,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110454,hold,1794929115827,9434,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110455,hold,1794929116027,9234,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110456,hold,1794929116227,9034,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110457,hold,1794929116427,8834,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110458,hold,1794929116627,8634,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110459,hold,1794929116827,8434,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110460,hold,1794929117027,8234,0,0,rejected,expired
+lenh: 1794929125261,op1,1794929110461,hold,1794929117227,8034,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110462,hold,1794929117427,7835,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110463,hold,1794929117627,7635,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110464,hold,1794929117827,7435,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110465,hold,1794929118027,7235,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110466,hold,1794929118227,7035,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110467,hold,1794929118427,6835,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110468,hold,1794929118627,6635,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110469,hold,1794929118827,6435,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110470,hold,1794929119027,6235,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110471,hold,1794929119227,6035,0,0,rejected,expired
+lenh: 1794929125262,op1,1794929110472,hold,1794929119427,5835,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110473,hold,1794929119627,5639,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110474,hold,1794929119827,5439,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110475,hold,1794929120027,5239,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110476,hold,1794929120227,5039,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110477,hold,1794929120427,4839,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110478,hold,1794929120627,4639,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110479,hold,1794929120827,4439,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110480,hold,1794929121027,4239,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110481,hold,1794929121227,4039,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110482,hold,1794929121427,3839,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110483,hold,1794929121627,3639,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110484,hold,1794929121827,3439,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110485,hold,1794929122027,3239,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110486,hold,1794929122227,3039,0,0,rejected,expired
+lenh: 1794929125266,op1,1794929110487,hold,1794929122427,2839,0,0,accepted,
+lenh: 1794929125266,op1,1794929110488,hold,1794929122627,2639,0,0,accepted,
+lenh: 1794929125266,op1,1794929110489,hold,1794929122827,2439,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929125266,op1,1794929110490,hold,1794929123027,2239,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929125266,op1,1794929110491,hold,1794929123227,2039,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929125266,op1,1794929110492,hold,1794929123427,1839,0,0,accepted,
+lenh: 1794929125266,op1,1794929110493,hold,1794929123627,1639,0,0,accepted,
+lenh: 1794929125266,op1,1794929110494,hold,1794929123827,1439,0,0,accepted,
+lenh: 1794929125266,op1,1794929110495,hold,1794929124027,1239,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929125266,op1,1794929110496,hold,1794929124227,1039,0,0,accepted,
+lenh: 1794929125266,op1,1794929110497,hold,1794929124427,839,0,0,accepted,
+lenh: 1794929125266,op1,1794929110498,hold,1794929124627,639,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33mlenh: 1794929125266,op1,1794929110499,hold,1794929124827,439,0,0,accepted,
+[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929125266,op1,1794929110500,hold,1794929125027,239,0,0,accepted,
+lenh: 1794929125266,op1,1794929110501,hold,1794929125227,39,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929125456,op1,1794929110502,hold,1794929125427,29,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929125656,op1,1794929110503,hold,1794929125627,29,0,0,accepted,
+lenh: 1794929125856,op1,1794929110504,hold,1794929125827,29,0,0,accepted,
+[33m[10:25:25|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929126056,op1,1794929110505,hold,1794929126027,29,0,0,accepted,
+[33m[10:25:26|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929126256,op1,1794929110506,hold,1794929126227,29,0,0,accepted,
+[33m[10:25:26|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929126457,op1,1794929110507,hold,1794929126427,30,0,0,accepted,
+[33m[10:25:26|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929126656,op1,1794929110508,hold,1794929126627,29,0,0,accepted,
+[33m[10:25:26|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929126856,op1,1794929110509,hold,1794929126827,29,0,0,accepted,
+[33m[10:25:26|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929127056,op1,1794929110510,hold,1794929127027,29,0,0,accepted,
+[33m[10:25:27|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929127257,op1,1794929110511,hold,1794929127227,30,0,0,accepted,
+[33m[10:25:27|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:27|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929127456,op1,1794929110512,hold,1794929127427,29,0,0,accepted,
+lenh: 1794929127657,op1,1794929110513,hold,1794929127627,30,0,0,accepted,
+[33m[10:25:27|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929127857,op1,1794929110514,hold,1794929127827,30,0,0,accepted,
+[33m[10:25:27|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+[33m[10:25:28|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929128056,op1,1794929110515,hold,1794929128027,29,0,0,accepted,
+lenh: 1794929128257,op1,1794929110516,hold,1794929128227,30,0,0,accepted,
+[33m[10:25:28|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929128457,op1,1794929110517,hold,1794929128427,30,0,0,accepted,
+[33m[10:25:28|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929128657,op1,1794929110518,hold,1794929128627,30,0,0,accepted,
+[33m[10:25:28|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929128856,op1,1794929110519,hold,1794929128827,29,0,0,accepted,
+[33m[10:25:28|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929129056,op1,1794929110520,hold,1794929129027,29,0,0,accepted,
+[33m[10:25:29|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+sent=204 buffered=196 dropped=0
+[33m[10:25:29|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929129256,op1,1794929110521,hold,1794929129227,29,0,0,accepted,
+lenh: 1794929129456,op1,1794929110522,hold,1794929129427,29,0,0,accepted,
+[33m[10:25:29|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929129656,op1,1794929110523,hold,1794929129627,29,0,0,accepted,
+[33m[10:25:29|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929129857,op1,1794929110524,hold,1794929129827,30,0,0,accepted,
+[33m[10:25:29|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929130057,op1,1794929110525,hold,1794929130027,30,0,0,accepted,
+[33m[10:25:30|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
+lenh: 1794929130256,op1,1794929110526,hold,1794929130227,29,0,0,accepted,
+[33m[10:25:30|Warn ] [0mReceived ack for not-existing command: 176! Ignoring... (mavlink_command_sender.cpp:304)
 Dang dung Gateway...
 [gateway-01] disconnected
-Tong: sent=340 buffered=132 dropped=0
+Tong: sent=268 buffered=196 dropped=0
