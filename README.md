@@ -20,40 +20,71 @@ flowchart LR
 Telemetry và trạng thái đi từ drone lên các bên nhận; lệnh đi theo chiều ngược lại, từ App (hoặc Commander) qua Broker
 tới Gateway rồi tới drone. Commander là công cụ dòng lệnh dùng để đo kênh lệnh.
 
-## Kết quả chính
+## Câu hỏi nghiên cứu
 
-Điều kiện đo: một máy Linux; Broker trong Docker; Gateway phát 4 topic × 5 tin/s = 20 tin/s; Logger chạy cùng máy
-với Gateway (chung đồng hồ) để đo độ trễ; netem đặt trên card mạng của Broker; mỗi trường hợp chạy 3 lần.
+1. Khi mạng xấu (trễ, mất gói) nhưng kết nối TCP vẫn sống, QoS 1 có giúp nhận đủ tin hơn QoS 0 không, và phải trả
+   giá bao nhiêu về độ trễ?
+2. Khi mất hẳn kết nối (Broker hỏng, bên nhận tạm vắng, Gateway chết), cơ chế nào của MQTT giữ được dữ liệu và
+   trạng thái?
+3. Các tính năng giữ tin và giao lại của MQTT có an toàn cho **lệnh điều khiển** gửi ngược về drone không?
+4. Vì sao độ trễ đo được lớn hơn độ trễ mạng đặt bằng netem?
 
-| Thí nghiệm | Tình huống | Kết quả |
+## Giả thuyết
+
+| # | Giả thuyết | Kết quả |
 |---|---|---|
-| A | Hai client cùng nhận, tắt một client | Client còn lại vẫn nhận đủ, đều 20 tin/s |
-| B | App chỉ subscribe `battery` | Chỉ tin `battery` tăng (≈ 5 tin/s); việc lọc làm ở Broker |
-| C | Tắt Broker 15 s (QoS 1) | Bộ đệm Gateway tắt: **mất 400 tin (11,1 %)**. Bộ đệm bật: **mất 0 tin**, tin xả bù trễ tối đa ≈ 19,5 s |
-| D | Gateway tắt bằng Ctrl+C hoặc `kill -9` | App hiện `offline` **dưới 1 s** (Gateway tự báo, hoặc Broker phát Last Will) |
-| E | Mạng xấu N1–N3, QoS 0 và QoS 1 | Nhận **100 %**, 0 tin trùng ở mọi điều kiện; mạng xấu chỉ làm tăng độ trễ |
-| F | Logger tắt 15 s rồi chạy lại | QoS 1 + phiên bền: **nhận bù 100 %**. QoS 0: mất 300–304 tin (8,3–8,4 %) |
-| H | Kênh lệnh điều khiển | 7200 lệnh qua 4 điều kiện mạng, **không mất lệnh nào**; lệnh bị giữ 11 s bị chặn (`expired`) |
+| GT1 | Trên kết nối TCP còn sống, TCP tự truyền lại gói mất nên QoS 0 cũng nhận đủ; QoS 1 không cải thiện tỷ lệ nhận, mạng xấu chỉ làm tăng trễ | **Đúng** (E) |
+| GT2 | Khi mất kết nối, chỉ cơ chế giữ tin **đúng chỗ** mới chống mất: bộ đệm ở Gateway khi Broker hỏng; QoS 1 + phiên bền khi bên nhận vắng; Last Will khi Gateway chết | **Đúng** (C, F, D) |
+| GT3 | Phiên bền và bộ đệm làm lệnh tới muộn, QoS 1 làm lệnh tới lại; Gateway phải tự kiểm tra từng lệnh | **Đúng** (H2, H3), kèm một lỗi mới tìm thấy ở Gateway |
+| GT4 | Phần trễ thêm ngoài netem là thuật toán Nagle của TCP gặp delayed ACK | **Đúng**, nhưng gói bị giữ nằm ở **socket của Gateway**, không chỉ ở Broker như dự đoán (Wireshark) |
+
+## Thí nghiệm có đối chứng
+
+Điều kiện chung: một máy Linux; PX4 SITL v1.17.0 + Gazebo, drone x500 **hover ở 10 m** trong mọi lượt; Broker
+Mosquitto 2.1.2 trong Docker; Gateway phát 4 topic × 5 tin/s = 20 tin/s; Logger và commander chạy cùng máy với
+Gateway (chung đồng hồ) để đo độ trễ; netem đặt trên card mạng của Broker; mỗi trường hợp 3 lần, thứ tự hai mức
+đảo giữa các lần. Số liệu đo ngày 17/11/2026.
+
+| Thí nghiệm | Đối chứng (biến thay đổi) | Giữ cố định | Kết quả |
+|---|---|---|---|
+| C | Bộ đệm Gateway **tắt / bật** | Broker tắt 15 s, QoS 1 | Tắt: **mất 360–540 tin (10,0–15,1 %)**. Bật: **mất 0 tin**, tin xả bù trễ tới 19–28 s |
+| E | **QoS 0 / QoS 1** × mạng N0–N3 | 180 s mỗi lượt, 24 lượt | Nhận **100 %**, 0 tin trùng ở mọi điều kiện; chỉ độ trễ thay đổi (bảng dưới) |
+| F | **QoS 0 / QoS 1** (cùng phiên bền) | Logger vắng 15 s | QoS 0: **mất 304 tin (8,5 %)**. QoS 1: **nhận bù 100 %**, tin bù trễ tới 15 s |
+| H2 | Kiểm tra lệnh **bật / tắt** | Lệnh `goto` bị Broker giữ 11,8 s | Bật: `rejected: expired` 3/3 lượt. Tắt: lệnh cũ qua cả 4 kiểm tra; drone không bay chỉ vì một lỗi khác của Gateway (`out_of_range`, xem Hạn chế) |
+| Nagle | Broker `set_tcp_nodelay` **false / true** | N1 (trễ 100 ms), QoS 1 | Trung vị 145–202 ms → **101 ms**; p95 vẫn **201 ms** vì còn Nagle ở socket Gateway |
+
+Thí nghiệm kiểm tra chức năng, không có đối chứng: A (hai client cùng nhận, tắt một client thì client kia vẫn nhận
+đủ 20 tin/s), B (chỉ subscribe `battery` thì chỉ nhận khoảng 5 tin/s, việc lọc làm ở Broker), D (Gateway tắt bằng
+Ctrl+C hoặc `kill -9` thì App hiện `offline` dưới 1 s), H1 (7200 lệnh qua 4 điều kiện mạng, **không mất lệnh
+nào**, khứ hồi 10–67 ms ở N0, chậm nhất 1,79 s ở N3), H3 (Broker khởi động lại giữa chuỗi lệnh: 26–36 lệnh mỗi lượt
+bị Paho đệm rồi tới muộn 3–10 s, đều bị chặn `expired`).
 
 Độ trễ ở thí nghiệm E (ms, trung bình 3 lần chạy):
 
 | Điều kiện | netem | QoS 0: trung vị / p95 | QoS 1: trung vị / p95 |
 |---|---|---|---|
-| N0 | không | 1 / 2 | 1 / 2 |
-| N1 | trễ 100 ms | 147 / 301 | 175 / 342 |
-| N2 | mất 5 % gói | 1 / 234 | 1 / 213 |
-| N3 | trễ 100 ms + mất 5 % | 211 / 573 | 241 / 589 |
+| N0 | không | 0 / 2 | 0 / 1 |
+| N1 | trễ 100 ms | 200 / 300 | 145 / 340 |
+| N2 | mất 5 % gói | 1 / 231 | 1 / 212 |
+| N3 | trễ 100 ms + mất 5 % | 204 / 536 | 240 / 557 |
 
 ![CDF độ trễ thí nghiệm E](data/plots/cdf.svg)
 
-- **Khi kết nối TCP còn sống, không mất tin nào, kể cả QoS 0.** TCP gửi lại đoạn bị mất, nên mạng xấu chỉ biến
-  thành độ trễ (p95 tới khoảng 0,6 s ở N3). QoS 1 không cải thiện gì trong trường hợp này.
+Khứ hồi lệnh QoS 1 ở N0 là 42 ms (2 trong 3 lượt; lượt còn lại 67 ms). Wireshark (`data/pcap/5_lenh_qos1_N0.pcap`) cho thấy: Gateway gửi
+PUBACK cho lệnh, Broker trì hoãn ACK gói đó 40 ms (delayed ACK), và Nagle giữ tin ack của Gateway suốt 40 ms đó.
+
+## Kết luận
+
+- **Khi kết nối TCP còn sống, không mất tin nào, kể cả QoS 0.** TCP truyền lại đoạn bị mất, nên mạng xấu chỉ biến
+  thành độ trễ (p95 khoảng 0,55 s ở N3). QoS 1 không cải thiện tỷ lệ nhận; chênh lệch trễ giữa QoS 0 và QoS 1
+  đổi chiều giữa N1 và N3, nên đó là ảnh hưởng của Nagle chứ không phải của QoS.
 - **Khi mất hẳn kết nối, mỗi loại sự cố cần đúng cơ chế của nó:** Broker hỏng cần bộ đệm ở Gateway; bên nhận tạm
   vắng cần QoS 1 cùng phiên bền; Gateway chết cần Last Will cùng tin trạng thái retained.
-- **Trễ ở N1 lớn hơn 100 ms là do thuật toán Nagle** trên Broker. Bật `set_tcp_nodelay true` thì trung vị về
-  102–103 ms.
-- **Với lệnh điều khiển, tới muộn còn nguy hiểm hơn mất lệnh.** Phiên bền giữ hộ lệnh khi Gateway vắng mặt, nên cần
-  thêm hạn dùng lệnh (3 s).
+- **Phần trễ thêm ngoài netem là Nagle gặp delayed ACK, ở cả hai phía.** Bật `set_tcp_nodelay true` trên Broker
+  đưa trung vị ở N1 về 101 ms. Nhưng thư viện Paho mà Gateway dùng không bật `TCP_NODELAY`, nên Gateway vẫn giữ tin
+  chờ ACK: khứ hồi lệnh N0 là 42 ms, p95 telemetry ở N1 là 201 ms.
+- **Với lệnh điều khiển, tới muộn nguy hiểm hơn mất lệnh.** Phiên bền và bộ đệm của Paho giữ hộ lệnh, rồi giao lại
+  sau 3–11,8 s; QoS 1 còn gửi lại lệnh với cờ DUP. Hạn dùng lệnh 3 s chặn được mọi lệnh muộn trong H2 và H3.
 
 ## Thiết kế MQTT
 
@@ -118,7 +149,7 @@ github.com/mavlink/MAVSDK (`sudo dpkg -i`).
 
 ```bash
 cmake -B build && cmake --build build -j
-ctest --test-dir build                 # test 4 kiểm tra lệnh, không cần Broker hay PX4
+ctest --test-dir build                 # test kênh lệnh, JSON, tham số, phân tích; không cần Broker hay PX4
 
 ./scripts/setup_broker.sh              # dựng Broker 172.28.0.10:1883, tài khoản drone/drone123
 # terminal khác: chạy drone mô phỏng (Gateway chờ PX4 tối đa 10 s)
@@ -134,8 +165,10 @@ Broker; điện thoại trong cùng mạng LAN thì nhập IP của laptop.
 
 ## Tái lập thí nghiệm
 
-Mọi script chạy từ thư mục gốc repo, cần Broker và PX4 SITL đang chạy. Định dạng các file CSV:
-[`data/README.md`](data/README.md).
+Mọi script chạy từ thư mục gốc repo, cần Broker và PX4 SITL đang chạy. Trước mỗi lượt, `scripts/hover.sh` tự cho
+drone cất cánh lên 10 m nếu drone đang ở dưới đất. Đặt một lần trong cửa sổ PX4 (`pxh>`): `param set COM_DLL_EXCEPT 2`.
+Airframe `gz_x500` đặt `NAV_DLL_ACT 2`, nên mất GCS quá 10 s là drone tự quay về và hạ cánh; giữa các lượt Gateway
+(đóng vai GCS) có tắt. Định dạng các file CSV: [`data/README.md`](data/README.md).
 
 | Thí nghiệm | Cách chạy | Kết quả | Báo cáo |
 |---|---|---|---|
@@ -143,7 +176,7 @@ Mọi script chạy từ thư mục gốc repo, cần Broker và PX4 SITL đang 
 | C, F | `./scripts/run_CF.sh c` · `./scripts/run_CF.sh f`, tổng hợp bằng `./scripts/summarize_CF.sh` | `data/C`, `data/F`, `data/summary_CF.md` | [`bao_cao_thi_nghiem_CF.md`](docs/bao_cao_thi_nghiem_CF.md) |
 | E | `./scripts/run_all_E.sh` (24 lượt, tự gọi `b_analyze`) | `data/E`, `data/plots` | [`bao_cao_thi_nghiem_E.md`](docs/bao_cao_thi_nghiem_E.md) |
 | H | `./scripts/run_H.sh all`, tổng hợp bằng `./scripts/summarize_H.sh` | `data/H` | [`bao_cao_kenh_lenh.md`](docs/bao_cao_kenh_lenh.md) |
-| Wireshark | `./scripts/capture_pcap.sh` (cần sudo) | `data/pcap` | [`data/pcap/README.md`](data/pcap/README.md) |
+| Wireshark | `./scripts/capture_pcap.sh` (cần sudo, chạy ở terminal thường); `lenh`, `nodelay` cho phần Nagle | `data/pcap` | [`data/pcap/README.md`](data/pcap/README.md) |
 
 ## Cấu trúc thư mục
 
@@ -179,9 +212,15 @@ docs/        kế hoạch, báo cáo từng thí nghiệm, giao thức kênh l�
 - Chưa mã hoá (không TLS); tài khoản MQTT dùng chung, chỉ phù hợp mạng thử nghiệm.
 - Bộ đệm của Gateway nằm trong RAM: Gateway tắt khi còn tin trong bộ đệm thì mất hết.
 - Thời gian phát hiện kết nối chết lặng (15 s) suy ra từ cấu hình keep-alive theo chuẩn MQTT 3.1.1, chưa đo.
-- Tắt Nagle thì trung vị ở N1 về đúng 100 ms, nhưng p95 vẫn khoảng 200 ms; phần này chưa tìm ra nguyên nhân.
-- Khứ hồi lệnh QoS 1 khoảng 42 ms được giải thích bằng Nagle gặp delayed ACK; đây là giả thuyết, chưa xác nhận bằng
-  Wireshark.
+- Gateway giữ tin vì Nagle (Paho không bật `TCP_NODELAY`). Chưa thử tắt Nagle trên socket của Gateway, nên chưa đo
+  được khứ hồi lệnh và p95 khi tắt hẳn Nagle ở cả hai phía.
+- **Lỗi ở Gateway:** lệnh tới ngay sau khi Gateway kết nối, trước tin telemetry đầu tiên từ PX4, được thực hiện với
+  độ cao bằng 0. Ở H2 (tắt kiểm tra) việc này làm lệnh `goto` cũ bị từ chối `out_of_range` một cách tình cờ; lệnh có
+  ghi `alt` thì độ cao đích sẽ sai. Chưa sửa; cách sửa đề xuất là trả `not_ready` khi chưa có telemetry.
+- Kiểm tra 3 (lệnh trùng) chưa được thử riêng: ở H3 bản gửi lại có cờ DUP tới khi đã quá hạn, nên kiểm tra 2 chặn trước.
+- Ở C, Gateway kết nối lại sau 18 s hoặc 27 s (Broker tắt 15 s). `strace` cho thấy mỗi lần thử lúc Broker tắt treo
+  3,1 s (`EHOSTUNREACH`), nhưng chưa giải thích được vì sao lịch thử khác nhau giữa các lượt.
+- Ảnh A, B, D và ảnh App ở `data/H/app` chụp trước khi bỏ nguồn dữ liệu giả, chưa chụp lại với PX4.
 
 ## Nhóm và quy tắc làm việc
 
