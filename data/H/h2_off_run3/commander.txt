@@ -1,2 +1,2 @@
-cmd_id=1794929022425 goto -> timeout, khu hoi -1 ms
+cmd_id=1794930759993 goto -> timeout, khu hoi -1 ms
 Tong: gui 1 lenh | timeout=1

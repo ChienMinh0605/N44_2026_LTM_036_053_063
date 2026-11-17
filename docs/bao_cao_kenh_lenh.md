@@ -154,22 +154,24 @@ Nhận xét N3 (trễ 100 ms + mất 5 %):
 
 ### H2 – Lệnh `goto` tới muộn (Gateway tắt khoảng 11 s)
 
+Trước mỗi lượt drone được đưa về điểm xuất phát (47.3977, 8.5456), cách đích `goto` (47.3980, 8.5460) khoảng 45 m.
+
 | Kiểm tra | Lượt | Lệnh bị giữ (ms) | Kết quả | Tốc độ lớn nhất sau khi bật lại |
 |---|---|---|---|---|
-| bật | 1 / 2 / 3 | 11755 / 11827 / 11726 | `rejected: expired` cả 3 lượt | 0,0 m/s, drone hover tại chỗ |
-| tắt (`--cmd-safety off`) | 1 / 2 / 3 | 11723 / 11817 / 11724 | `rejected: out_of_range` cả 3 lượt | 0,0 m/s, drone hover tại chỗ |
+| bật | 1 / 2 / 3 | 11954 / 11666 / 11733 | `rejected: expired` cả 3 lượt | 0,0 m/s, drone hover tại chỗ |
+| tắt (`--cmd-safety off`) | 1 / 2 / 3 | 11934 / 11940 / 11511 | `accepted` cả 3 lượt | 5,2 m/s, drone bay theo lệnh cũ |
 
 Broker giữ lệnh QoS 1 trong phiên bền của Gateway (`clean_session = false`) và giao lại ngay khi Gateway
-kết nối lại, lúc lệnh đã 11,7–11,8 s tuổi. Kiểm tra bật: kiểm tra 2 chặn lệnh (`expired`).
+kết nối lại, lúc lệnh đã 11,5–12 s tuổi. Nếu không có kiểm tra hạn dùng, drone bay theo một lệnh đã gửi từ 12 giây
+trước. Kết quả giống bộ số cũ (nguồn giả: `accepted`, 5,0 m/s).
 
-Kiểm tra tắt: lệnh cũ qua cả 4 kiểm tra và tới bước thực hiện, nhưng drone vẫn không bay, vì **một lỗi khác của
-Gateway**. Lệnh tới ngay khi Gateway vừa kết nối, trước khi Gateway nhận được tin vị trí đầu tiên từ PX4. Lệnh
-`goto` không ghi độ cao nên Gateway lấy độ cao hiện tại (`gateway/src/px4_source.cpp`, hàm `execute`), lúc đó
-vẫn là giá trị khởi tạo 0, nên tự từ chối `out_of_range` (dưới 1 m). Drone đứng yên **do tình cờ**, không phải
-nhờ được bảo vệ. Bộ số cũ đo bằng nguồn giả (có số liệu ngay khi khởi động) cho `accepted` và drone bay 5 m/s theo
-lệnh đã gửi từ 11 s trước. Lỗi này còn nguy hiểm theo chiều ngược lại: lệnh `goto` có ghi `alt` sẽ tính độ cao
-so với mực nước biển từ giá trị khởi tạo 0, nên độ cao đích sai. Cách sửa đề xuất: Gateway chỉ thực hiện lệnh
-khi đã nhận được telemetry đầu tiên từ PX4 (nếu chưa thì trả `not_ready`).
+Lần đo đầu tiên bằng PX4 (trước khi sửa) cho kết quả khác: kiểm tra tắt thì cả 3 lượt bị `rejected: out_of_range`
+và drone không bay. Lý do là **một lỗi của Gateway**: lệnh tới ngay khi Gateway vừa kết nối, trước tin vị trí đầu
+tiên từ PX4. Lệnh `goto` không ghi độ cao nên Gateway lấy độ cao hiện tại, lúc đó vẫn là giá trị khởi tạo 0, và tự
+từ chối (dưới 1 m). Drone đứng yên do tình cờ, không phải nhờ được bảo vệ. Lệnh có ghi `alt` còn nguy hiểm hơn: độ
+cao đích được tính từ độ cao so với mực nước biển, lúc đó cũng là 0. Đã sửa ở `gateway/src/px4_source.cpp`: trước
+khi thực hiện lệnh, Gateway chờ tin vị trí đầu tiên tối đa 2 s, quá 2 s thì trả `not_ready`. Sau khi sửa, drone
+giữ đúng độ cao 10 m khi bay theo lệnh `goto`.
 
 ### H3 – Broker dừng 5 s giữa chuỗi 100 lệnh QoS 1 (`docker stop` / `docker start`)
 
@@ -197,6 +199,6 @@ không mất ack nào.
   (N0) tới 100 ms (N1), đã xác nhận bằng Wireshark. Tuy vậy, **không thể tin vào các
   bảo đảm của MQTT để giữ an toàn cho lệnh**. Giữ tin (retained, phiên bền, bộ đệm offline của
   client) và giao lại (QoS 1) đều làm lệnh tới muộn hoặc tới lại.
-- Hạn dùng lệnh (kiểm tra 2) là kiểm tra có tác dụng nhất trong các thí nghiệm: nó chặn lệnh trễ 11,8 s ở
+- Hạn dùng lệnh (kiểm tra 2) là kiểm tra có tác dụng nhất trong các thí nghiệm: nó chặn lệnh trễ 12 s ở
   H2 và 97 lệnh bị đệm ở H3 (gồm 2 bản gửi lại có cờ DUP).
 - Kiểm tra 2 dựa vào đồng hồ hai máy khớp nhau, nên điện thoại phải để đồng hồ tự động đồng bộ.

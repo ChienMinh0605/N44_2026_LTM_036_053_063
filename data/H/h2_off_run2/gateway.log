@@ -1,23 +1,23 @@
-[34m[10:23:05|Info ] [0mMAVSDK version: v3.17.5 (mavsdk_impl.cpp:35)
+[34m[10:51:45|Info ] [0mMAVSDK version: v3.17.5 (mavsdk_impl.cpp:35)
 Dang cho PX4 tren udpin://0.0.0.0:14540 ...
-[34m[10:23:05|Info ] [0mNew system on: 127.0.0.1:14580 (system ID: 1) (udp_connection.cpp:263)
-[32m[10:23:05|Debug] [0mComponent Autopilot (component ID: 1) added. (system_impl.cpp:508)
-[32m[10:23:06|Debug] [0mDiscovered 1 component (system_impl.cpp:628)
-Gateway boot_id=1794928985918 qos=1 buffer=on cmd-safety=off scenario=N0 run=1 -> data/H/h2_off_run2
+[34m[10:51:45|Info ] [0mNew system on: 127.0.0.1:14580 (system ID: 1) (udp_connection.cpp:263)
+[32m[10:51:45|Debug] [0mComponent Autopilot (component ID: 1) added. (system_impl.cpp:508)
+[32m[10:51:45|Debug] [0mDiscovered 1 component (system_impl.cpp:628)
+Gateway boot_id=1794930705054 qos=1 buffer=on cmd-safety=off scenario=N0 run=1 -> data/H/h2_off_run2
 [gateway-01] connect_attempt: tcp://172.28.0.10:1883
 [gateway-01] connected: connect onSuccess called
 Dang dung Gateway...
 [gateway-01] disconnected
-Tong: sent=52 buffered=0 dropped=0
-[34m[10:23:21|Info ] [0mMAVSDK version: v3.17.5 (mavsdk_impl.cpp:35)
+Tong: sent=48 buffered=0 dropped=0
+[34m[10:52:00|Info ] [0mMAVSDK version: v3.17.5 (mavsdk_impl.cpp:35)
 Dang cho PX4 tren udpin://0.0.0.0:14540 ...
-[34m[10:23:21|Info ] [0mNew system on: 127.0.0.1:14580 (system ID: 1) (udp_connection.cpp:263)
-[32m[10:23:21|Debug] [0mComponent Autopilot (component ID: 1) added. (system_impl.cpp:508)
-[32m[10:23:22|Debug] [0mDiscovered 1 component (system_impl.cpp:628)
-Gateway boot_id=1794929001499 qos=1 buffer=on cmd-safety=off scenario=N0 run=1 -> data/H/h2_off_run2
+[34m[10:52:00|Info ] [0mNew system on: 127.0.0.1:14580 (system ID: 1) (udp_connection.cpp:263)
+[32m[10:52:00|Debug] [0mComponent Autopilot (component ID: 1) added. (system_impl.cpp:508)
+[32m[10:52:01|Debug] [0mDiscovered 1 component (system_impl.cpp:628)
+Gateway boot_id=1794930720588 qos=1 buffer=on cmd-safety=off scenario=N0 run=1 -> data/H/h2_off_run2
 [gateway-01] connect_attempt: tcp://172.28.0.10:1883
 [gateway-01] connected: connect onSuccess called
-lenh: 1794929002199,op1,1794928990382,goto,1794928990382,11817,0,0,rejected,out_of_range
+lenh: 1794930721393,op1,1794930709453,goto,1794930709453,11940,0,0,accepted,
 sent=100 buffered=0 dropped=0
 Dang dung Gateway...
 [gateway-01] disconnected

@@ -44,12 +44,12 @@ Từng lần chạy:
 
 | Thư mục | Kiểm tra | Lệnh bị giữ (ms) | Kết quả | Lý do | Tốc độ lớn nhất sau khi bật lại (m/s) | Drone bay? |
 |---|---|---|---|---|---|---|
-| h2_off_run1 | off | 11723 | rejected | out_of_range | 0.0 | không |
-| h2_off_run2 | off | 11817 | rejected | out_of_range | 0.0 | không |
-| h2_off_run3 | off | 11724 | rejected | out_of_range | 0.0 | không |
-| h2_on_run1 | on | 11755 | rejected | expired | 0.0 | không |
-| h2_on_run2 | on | 11827 | rejected | expired | 0.0 | không |
-| h2_on_run3 | on | 11726 | rejected | expired | 0.0 | không |
+| h2_off_run1 | off | 11934 | accepted | - | 5.2 | có |
+| h2_off_run2 | off | 11940 | accepted | - | 5.2 | có |
+| h2_off_run3 | off | 11511 | accepted | - | 5.2 | có |
+| h2_on_run1 | on | 11954 | rejected | expired | 0.0 | không |
+| h2_on_run2 | on | 11666 | rejected | expired | 0.0 | không |
+| h2_on_run3 | on | 11733 | rejected | expired | 0.0 | không |
 
 ## H3 – Broker khởi động lại giữa chuỗi 100 lệnh QoS 1
 

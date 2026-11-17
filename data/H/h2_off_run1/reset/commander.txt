@@ -1,0 +1,5 @@
+[commander-op1-1794930635374] connect_attempt: tcp://172.28.0.10:1883
+[commander-op1-1794930635374] connected: connect onSuccess called
+[commander-op1-1794930635374] disconnected
+cmd_id=1794930635487 goto -> accepted, khu hoi 71 ms
+Tong: gui 1 lenh | accepted=1 | khu hoi trung vi 71 ms, p95 71 ms
