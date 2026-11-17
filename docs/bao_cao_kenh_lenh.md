@@ -37,11 +37,15 @@ Dòng "Đang giữ quyền" lấy từ trường `owner` của mọi ack.
 Đã kiểm tra bằng tay với Broker, Gateway và PX4 SITL (ngày 18/11/2026, theo đúng các bước của
 `app/test/cmd_channel_live_test.dart`). Gateway dùng PX4 không tự kiểm tra trạng thái bay (như cất cánh khi đang
 bay) mà để PX4 quyết định, nên bước từ chối được thử bằng lệnh cất cánh 200 m (`rejected: out_of_range`).
+Thử thêm cất cánh lần hai khi drone đang bay ở 15 m: PX4 **chấp nhận** và drone bay lên thêm 15 m, tới 30 m.
+Như vậy với PX4, một lệnh cất cánh bấm nhầm lần hai không bị chặn; muốn chặn thì Gateway phải tự kiểm tra trạng
+thái bay trước khi chuyển lệnh (hướng cải tiến).
 
 | Tình huống | Kết quả |
 |---|---|
 | Hạ cánh | `accepted`, khứ hồi 48 ms, độ cao về 0 m |
 | Cất cánh 15 m, rồi cất cánh 200 m | `accepted` (81 ms), lên 15,0 m; lệnh 200 m `rejected: out_of_range` (44 ms) |
+| Cất cánh 15 m lần nữa khi đang bay ở 15 m | `accepted` (57 ms): PX4 nhận lệnh và drone bay lên thêm 15 m, tới 30,0 m |
 | Bay tới 47.3980, 8.5460 | `accepted` (47 ms), drone tới 47.398000, 8.546000 |
 | App nhả quyền, op2 gửi lệnh | App hiện người giữ quyền là `op2`, lệnh của App bị `not_owner` (62 ms) |
 | Quay về | `accepted` (49 ms), drone về điểm xuất phát 47.397972, 8.546164 rồi hạ cánh |
@@ -54,7 +58,7 @@ bay) mà để PX4 quyết định, nên bước từ chối được thử bằ
 | ![Hạ cánh](../data/H/app/1_ha_canh.png) Hạ cánh: độ cao về 0 m | ![Cất cánh](../data/H/app/2_cat_canh.png) Cất cánh 15 m: độ cao 15.0 m |
 | ![out_of_range](../data/H/app/3_out_of_range.png) Cất cánh 200 m: `rejected: out_of_range` (hai lệnh trước `accepted`, 48 ms và 81 ms) | ![Bay tới](../data/H/app/4_bay_toi.png) Bay tới: tới 47.398000, 8.546000, `accepted` |
 | ![Quay về](../data/H/app/5_quay_ve.png) Quay về: về điểm xuất phát, độ cao 0.0 m | ![not_owner](../data/H/app/6_not_owner.png) op2 giữ quyền: lệnh của App bị `rejected: not_owner` |
-| ![Không phản hồi](../data/H/app/7_khong_phan_hoi.png) Tắt Gateway: "Không có phản hồi (quá 3 giây)" | |
+| ![Không phản hồi](../data/H/app/7_khong_phan_hoi.png) Tắt Gateway: "Không có phản hồi (quá 3 giây)" | ![Cất cánh lần hai](../data/H/app/3b_cat_canh_lan_hai.png) Cất cánh lần hai khi đang bay: cả hai lệnh `accepted`, drone lên 30,0 m |
 
 ## 4. Kết quả thí nghiệm H
 
