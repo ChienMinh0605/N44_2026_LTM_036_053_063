@@ -132,6 +132,7 @@ void write_rate_svg(const fs::path& file,const std::vector<Result>& results) {
 }
 void usage(){std::cerr<<"Usage: b_analyze --input data/E [--out data/plots] [--strict]\n";}
 }
+#ifndef ANALYZE_NO_MAIN  // test/analyze_test.cpp include file nay de goi calculate()
 int main(int argc,char**argv) {
   try {
     fs::path base="data/E",output="data/plots";bool strict=false;
@@ -158,3 +159,4 @@ int main(int argc,char**argv) {
     if(results.size()!=24)std::cerr<<"WARNING: only "<<results.size()<<"/24 runs (not final experiment E).\n";
   }catch(const std::exception&e){std::cerr<<"Analysis error: "<<e.what()<<"\n";return 1;}
 }
+#endif
