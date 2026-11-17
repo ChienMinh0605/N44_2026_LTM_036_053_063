@@ -53,7 +53,7 @@ Một client rời đi không ảnh hưởng client khác, và Gateway (publishe
   thấy kết nối đứt mà chưa có DISCONNECT. Khi đó Broker phát **Last Will** `{"state":"offline"}` mà Gateway đã
   đăng ký lúc CONNECT.
 - Keep-alive (10 s × 1,5 = 15 s) chỉ cần tới khi kết nối "chết lặng": mạng bị cắt nhưng không ai đóng TCP
-  (máy Gateway mất điện, rút cáp). Trường hợp này là thí nghiệm G (netem mất 100 %), lúc đó App sẽ phải đợi
+  (máy Gateway mất điện, rút cáp). Nhóm không đo trường hợp này; theo chuẩn MQTT 3.1.1, App sẽ phải đợi
   khoảng 15 s mới hiện offline.
 - Topic `status` là tin retained, nên client kết nối sau vẫn biết ngay trạng thái Gateway, như dòng `(retained)`
   ở đầu log Logger trong ảnh A1.
