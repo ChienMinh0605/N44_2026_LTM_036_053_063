@@ -1,7 +1,7 @@
 time_ms,client_id,event,detail
-1794646898026,gateway-01,connect_attempt,tcp://172.28.0.10:1883
-1794646898040,gateway-01,connected,connect onSuccess called
-1794646904042,gateway-01,disconnected,
-1794646915275,gateway-01,connect_attempt,tcp://172.28.0.10:1883
-1794646915288,gateway-01,connected,connect onSuccess called
-1794646927890,gateway-01,disconnected,
+1794930756398,gateway-01,connect_attempt,tcp://172.28.0.10:1883
+1794930756510,gateway-01,connected,connect onSuccess called
+1794930759511,gateway-01,disconnected,
+1794930771478,gateway-01,connect_attempt,tcp://172.28.0.10:1883
+1794930771503,gateway-01,connected,connect onSuccess called
+1794930783706,gateway-01,disconnected,

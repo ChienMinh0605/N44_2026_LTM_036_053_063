@@ -82,6 +82,8 @@ int main(int argc,char**argv){
     Guard guard;
     // Step 1: fresh PID via netem.sh; reset previous condition
     if(run_sync({netem,"N0"})!=0)throw std::runtime_error("Broker/netem not ready");
+    // Step 1b: drone must hover before measuring; scripts/hover.sh takes off if it is on the ground
+    if(run_sync({(cwd/"scripts/hover.sh").string()},(dir/"hover.txt").string())!=0)throw std::runtime_error("Drone not hovering, see "+(dir/"hover.txt").string());
     // Step 2: remove stale MQTT persistent session BEFORE applying netem
     if(run_sync({logger.string(),"--clean"},(dir/"clean.log").string())!=0)throw std::runtime_error("Logger --clean failed");
     // Step 3: apply current network condition, verify qdisc

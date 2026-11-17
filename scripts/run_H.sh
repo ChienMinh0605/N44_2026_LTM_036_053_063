@@ -48,6 +48,7 @@ skip_if_done() {
     return 0
   fi
   rm -rf "$d"; mkdir -p "$d"
+  ./scripts/hover.sh >"$d/hover.txt" 2>&1 || { cat "$d/hover.txt" >&2; exit 1; }  # đo khi drone hover
   return 1
 }
 
@@ -96,6 +97,12 @@ h2() {
       local d="data/H/h2_${mode}_run${run}"
       echo "== H2 $d"
       skip_if_done "$d" telemetry_after.txt && continue
+      # 0. Đưa drone về điểm xuất phát (cách đích goto khoảng 45 m), để lượt nào cũng có quãng đường để bay
+      mkdir -p "$d/reset"
+      start_gw "$d/reset"
+      "$CMD" --action goto --lat 47.3977 --lon 8.5456 >"$d/reset/commander.txt" 2>&1
+      sleep 15
+      stop_gw
       # 1. Gateway chạy 3 s để Broker có phiên bền (clean_session=false) rồi tắt
       start_gw "$d" --cmd-safety "$mode"
       sleep 1.5

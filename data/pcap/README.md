@@ -12,9 +12,42 @@ Gói CONNECT chứa tài khoản MQTT dạng chữ thường (`drone` / `drone12
 | `2_qos0.pcap` | Như trên nhưng QoS 0 | PUBLISH QoS 0 **không có PUBACK** (PUBACK duy nhất là của tin `status` QoS 1) |
 | `3_mat_goi_N2.pcap` | netem N2 (mất 5 %), QoS 1, 30 s | 31 lỗ hổng sequence (gói netem bỏ), 33 gói TCP truyền lại, 15 Dup ACK; MQTT vẫn đủ 1201 PUBLISH |
 | `4_last_will.pcap` | Gateway bị `kill -9` | Không có DISCONNECT của Gateway; Broker tự phát Last Will `offline` tới Logger (gói 255) |
+| `5_lenh_qos1_N0.pcap` | `capture_pcap.sh lenh`: N0, 20 lệnh hold QoS 1 (PX4 SITL); khứ hồi do commander đo ở `5_lenh_qos1_N0_cmd_rtt.csv` | Khứ hồi 42 ms là Nagle trên socket của Gateway gặp delayed ACK của Broker (xem dưới) |
+| `6_N1_nodelay.pcap` | `capture_pcap.sh nodelay`: N1, telemetry QoS 1, 30 s, Broker bật `set_tcp_nodelay true` | p95 200 ms còn lại là Nagle trên socket của Gateway (xem dưới) |
 
 Ở N2, netem bỏ gói trước khi gói tới bridge, nên Wireshark không thấy gói gốc. Wireshark báo
 "Previous segment not captured" tại chỗ thiếu, sau đó là Dup ACK, rồi gói được TCP truyền lại.
+
+## Nagle và delayed ACK (file 5 và 6)
+
+Gateway chạy trên máy, nối Broker từ cổng `172.28.0.1:37468` (file 5; gói CONNECT của Gateway nằm trước lúc bắt
+nên không có trong file) và `172.28.0.1:58148` (file 6). Commander ở cổng `40492`.
+
+**`5_lenh_qos1_N0.pcap`, lệnh đầu tiên (gói 96–105).** Bộ lọc: `tcp.port == 37468 || tcp.port == 40492`.
+
+| Gói | Thời gian (so với gói 96) | Chiều | Nội dung |
+|---|---|---|---|
+| 96 | 0 ms | commander → Broker | PUBLISH `drone/001/cmd` (QoS 1) |
+| 97 | 0 ms | Broker → Gateway | PUBLISH `drone/001/cmd` |
+| 98 | 0 ms | Broker → commander | PUBACK cho lệnh |
+| 100 | 0,1 ms | Gateway → Broker | PUBACK cho lệnh. Gói nhỏ chưa được ACK, nên Nagle giữ mọi gói nhỏ tiếp theo |
+| 101 | 40,4 ms | commander → Broker | TCP ACK cho gói 98 (delayed ACK), không giữ gì lại |
+| 102 | 41,4 ms | Broker → Gateway | TCP ACK cho gói 100 (delayed ACK) |
+| 103 | 41,4 ms | Gateway → Broker | PUBLISH `drone/001/cmd/ack`: lên dây ngay khi gói 102 tới. Theo `ack_ms` trong JSON, tin này đã nằm chờ trong Gateway khoảng 27 ms |
+| 105 | 41,6 ms | Broker → commander | Broker chuyển tin ack ngay |
+
+Trên cả 20 lệnh: Broker ACK gói PUBACK của Gateway sau 40,1–41,3 ms. Tin ack của Gateway lên dây 0,0 ms sau ACK
+đó, sau khi chờ 19–36 ms. Broker chuyển tiếp mất 0,1–1,0 ms. Như vậy giả thuyết cũ (Nagle giữ gói ở chặng
+Broker → commander) **không đúng**. Nagle và delayed ACK đúng là nguyên nhân, nhưng gói bị giữ nằm ở chặng Gateway → Broker.
+
+**`6_N1_nodelay.pcap`.** Bộ lọc: `tcp.port == 58148 && mqtt`. Gói 789: Gateway gửi `position` ngay. Ba tin
+`altitude`, `velocity`, `battery` cùng `timestamp_ms` chờ tới gói 792 (PUBACK + ACK của Broker, trễ 100 ms do
+netem), rồi đi chung **một** gói TCP (gói 793). Phía Broker không giữ tin nào (Broker → Logger luôn đúng 100 ms
+sau Gateway → Broker). Trên 392 tin sau 10 s đầu: trễ trong Gateway có trung vị 1 ms, p95 101 ms; tổng trễ có
+trung vị 101 ms, p95 201 ms.
+
+Mở file bằng Wireshark như các file trên. Muốn xem thời gian giữa hai gói thì chọn gói đầu,
+bấm *Edit → Set/Unset Time Reference*, rồi đọc cột *Time* của gói sau.
 
 ## Ảnh đã chụp và cách đọc (dùng làm chú thích trong báo cáo)
 

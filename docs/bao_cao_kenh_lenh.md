@@ -1,6 +1,7 @@
 # Báo cáo – Kênh lệnh điều khiển drone (phần của Tiên, bản nháp)
 
-> Số liệu lấy từ `data/H/summary.md` (sinh bằng `./scripts/summarize_H.sh`). Còn thiếu: link video H2.
+> Số liệu lấy từ `data/H/summary.md` (sinh bằng `./scripts/summarize_H.sh`), đo lại bằng PX4 SITL ngày 17/11/2026.
+> Bộ số cũ đo bằng nguồn dữ liệu giả còn trong git ở commit `5dd7169`. Còn thiếu: link video H2.
 
 ## 1. Hai chiều dữ liệu trên cùng một Broker
 
@@ -56,20 +57,28 @@ Dòng "Đang giữ quyền" lấy từ trường `owner` của mọi ack.
 
 ## 4. Kết quả thí nghiệm H
 
-Broker, Gateway và `commander` chạy cùng một máy Linux, chung đồng hồ.
+Broker, Gateway và `commander` chạy cùng một máy Linux, chung đồng hồ. Gateway điều khiển PX4 SITL v1.17.0 (Gazebo,
+x500); trước mỗi lượt `scripts/hover.sh` bảo đảm drone đang hover ở 10 m (kết quả trong `hover.txt` của lượt).
 
 ### H1 – Thời gian khứ hồi lệnh (300 lệnh `hold` mỗi lượt, cách nhau 200 ms, 3 lượt mỗi ô)
 
 | Điều kiện | QoS | Số lệnh | timeout | Trung vị (ms) | p95 (ms) | Lớn nhất (ms) | Đi / về trung vị (ms) |
 |---|---|---|---|---|---|---|---|
-| N0 | 0 | 900 | 0 | 2 | 41 | 43 | 1 / 1 |
-| N0 | 1 | 900 | 0 | 42 | 43 | 44 | 1 / 41 |
-| N1 (trễ 100 ms) | 0 | 900 | 0 | 346 | 395 | 499 | 242 / 101 |
-| N1 (trễ 100 ms) | 1 | 900 | 0 | 449 | 498 | 503 | 225 / 201 |
-| N2 (mất 5 %) | 0 | 900 | 0 | 2 | 235 | 656 | 1 / 1 |
-| N2 (mất 5 %) | 1 | 900 | 0 | 80 | 330 | 834 | 18 / 41 |
-| N3 (trễ 100 ms + mất 5 %) | 0 | 900 | 0 | 415 | 843 | 1510 | 209 / 200 |
-| N3 (trễ 100 ms + mất 5 %) | 1 | 900 | 0 | 481 | 915 | 1852 | 200 / 254 |
+| N0 | 0 | 900 | 0 | 15 | 48 | 64 | 1 / 0 |
+| N0 | 1 | 900 | 0 | 42 | 68 | 324 | 1 / 29 |
+| N1 (trễ 100 ms) | 0 | 900 | 0 | 378 | 489 | 531 | 202 / 182 |
+| N1 (trễ 100 ms) | 1 | 900 | 0 | 457 | 496 | 642 | 196 / 260 |
+| N2 (mất 5 %) | 0 | 900 | 0 | 16 | 242 | 617 | 1 / 0 |
+| N2 (mất 5 %) | 1 | 900 | 0 | 43 | 383 | 1214 | 1 / 30 |
+| N3 (trễ 100 ms + mất 5 %) | 0 | 900 | 0 | 426 | 889 | 1671 | 237 / 189 |
+| N3 (trễ 100 ms + mất 5 %) | 1 | 900 | 0 | 484 | 959 | 1785 | 191 / 251 |
+
+"Đi" = commander → Gateway (`gw_recv_ms − sent_ms`), "về" = Gateway → commander (lúc nhận ack − `ack_ms`). Phần
+còn lại của khứ hồi là **thời gian Gateway thực hiện lệnh**: MAVSDK gửi lệnh `hold` tới PX4 và chờ PX4 xác nhận,
+trung vị 10–16 ms ở mọi lượt. Bộ số cũ (nguồn giả) không có phần này, nên khứ hồi N0 QoS 0 tăng từ 2 lên 15 ms.
+
+So với bộ số cũ: trung vị N0 QoS 0 tăng 2 → 15 ms, N1 tăng 346/449 → 378/457 ms, N2 QoS 1 giảm 80 → 43 ms,
+N3 tăng 415/481 → 426/484 ms; p95 N3 tăng 843/915 → 889/959 ms; lệnh chậm nhất giảm 1,85 → 1,79 s.
 
 Netem đặt trên card `eth0` của container Broker, nên chỉ các gói **Broker gửi ra** bị trễ hoặc mất.
 Mỗi lệnh đi qua Broker hai lần theo chiều ra: Broker → Gateway (lệnh) và Broker → commander (ack).
@@ -79,79 +88,117 @@ Nhận xét chung:
 - **Không mất lệnh nào** ở cả 4 điều kiện (0 timeout trên 7200 lệnh), kể cả QoS 0 khi mất 5 % gói. Lý do:
   mất gói xảy ra ở tầng IP, TCP truyền lại, nên ở tầng MQTT chỉ thấy lệnh tới muộn hơn. QoS 0 chỉ mất
   tin khi chính kết nối TCP bị đứt (như H3).
-- **Lệnh chậm nhất là 1,85 s (N3, QoS 1), vẫn dưới hạn dùng 3 s**, nên trong mọi điều kiện đã thử,
-  kiểm tra 2 không từ chối nhầm một lệnh hợp lệ nào. TTL 3 s còn dư khoảng 1,1 s so với lệnh chậm nhất.
+- **Lệnh chậm nhất là 1,79 s (N3, QoS 1), vẫn dưới hạn dùng 3 s**, nên trong mọi điều kiện đã thử,
+  kiểm tra 2 không từ chối nhầm một lệnh hợp lệ nào. TTL 3 s còn dư khoảng 1,2 s so với lệnh chậm nhất.
 
 Nhận xét N0:
 
 - Không mất lệnh nào (0 timeout trên 1800 lệnh).
-- **QoS 1 luôn khoảng 42 ms, và phần trễ nằm ở chiều về** (ack từ Gateway tới commander: 41 ms), chiều
-  đi chỉ 1 ms. Chiến đã xác định nguyên nhân là Nagle của TCP gặp delayed ACK. Giả thuyết cụ thể hơn: với
-  QoS 1, Broker ghi liền hai gói nhỏ về commander (PUBACK cho lệnh, rồi PUBLISH của ack). Nagle giữ gói
-  thứ hai cho tới khi commander ACK gói thứ nhất, mà ACK đó bị trì hoãn khoảng 40 ms. Cần chụp Wireshark
-  để xác nhận.
-- QoS 0: lượt 1 cũng khoảng 40 ms (lần này trễ ở chiều đi), lượt 2 và 3 chỉ 2 ms. Như vậy với QoS 0 hiện
-  tượng Nagle không xảy ra lần nào cũng như lần nào, nên phải báo cả p95 chứ không chỉ trung vị.
+- **QoS 1 khoảng 42 ms (lượt 1 và 2), và phần trễ nằm ở chiều về** (ack từ Gateway tới commander: 27–29 ms),
+  chiều đi chỉ 1 ms, Gateway thực hiện lệnh khoảng 12 ms. Nguyên nhân là Nagle của TCP gặp delayed ACK, **đã xác nhận bằng Wireshark**
+  (`data/pcap/5_lenh_qos1_N0.pcap`, 20 lệnh hold QoS 1, khứ hồi 41–43 ms). Nhưng gói bị giữ nằm ở **socket
+  của Gateway**, không phải ở Broker như giả thuyết ban đầu. Trình tự của mỗi lệnh (lệnh đầu, gói 96–105):
+
+  | Thời điểm | Gói | Diễn biến |
+  |---|---|---|
+  | 0 ms | commander → Broker → Gateway | PUBLISH lệnh (QoS 1) |
+  | 0,1 ms | Gateway → Broker | PUBACK cho lệnh: một gói nhỏ, Broker chưa ACK |
+  | ~12 ms | (trong Gateway) | Gateway thực hiện xong lệnh hold qua MAVSDK, gọi publish tin ack (`ack_ms`) |
+  | 12–40 ms | (trong Gateway) | Nagle giữ tin ack vì PUBACK trước đó chưa được ACK |
+  | 40,2 ms | Broker → Gateway | Broker gửi TCP ACK cho PUBACK, trễ 40 ms do **delayed ACK** |
+  | 40,2 ms | Gateway → Broker | ngay sau đó (0,0 ms) tin ack mới lên dây |
+  | 40,3 ms | Broker → commander | Broker chuyển tin ack ngay (0,1 ms) |
+
+  Trên 20 lệnh: Broker ACK PUBACK của Gateway sau 40,1–41,3 ms. Tin ack lên dây đúng 0,0 ms sau ACK đó,
+  sau khi nằm chờ trong Gateway 19–36 ms (trung vị 29 ms). Broker → commander không bị giữ: commander cũng
+  ACK trễ PUBACK của Broker khoảng 40 ms, nhưng lúc đó Broker không có gì cần gửi tiếp. Vì Gateway thực
+  hiện lệnh mất 5–21 ms, luôn ít hơn 40 ms, nên khứ hồi luôn bị kéo đúng về khoảng 40 ms. Nagle bật vì
+  thư viện Paho mà Gateway dùng không đặt `TCP_NODELAY`; `set_tcp_nodelay true` trên Broker không chữa được
+  trường hợp này.
+- QoS 0: lượt 1 là 47 ms (chiều đi 34 ms), lượt 2 và 3 chỉ 15 và 10 ms, gần như toàn bộ là thời gian Gateway
+  thực hiện lệnh. QoS 1 lượt 3 cũng chậm thêm 25 ms ở chiều đi (67 ms). Phần chậm ở chiều đi này lúc có lúc
+  không giữa các lượt; có thể cũng là Nagle (lần này ở chiều commander → Gateway) nhưng chưa bắt gói để xác
+  nhận. Vì thế phải báo cả p95 chứ không chỉ trung vị.
 
 Nhận xét N1 (trễ 100 ms):
 
-- Netem chỉ thêm 100 ms cho mỗi chiều Broker gửi ra, nên lẽ ra khứ hồi khoảng 200 ms. Thực tế là
-  **346 ms (QoS 0) và 449 ms (QoS 1)**.
+- Netem chỉ thêm 100 ms cho mỗi chiều Broker gửi ra, nên lẽ ra khứ hồi khoảng 210 ms (200 ms netem cộng
+  khoảng 12 ms Gateway thực hiện lệnh). Thực tế là **378 ms (QoS 0) và 457 ms (QoS 1)**.
 - Phần trễ thêm là Nagle. Một gói nhỏ phải chờ gói trước được ACK mới được gửi, mà khi mạng trễ thì
   thời gian chờ ACK tăng theo. Mỗi lần bị Nagle giữ lại tốn thêm khoảng 100 ms, thay vì khoảng 40 ms như ở N0.
 - Tách theo chiều cho thấy rõ điều này:
-  - Chiều về QoS 0 là 101 ms, chỉ có trễ netem, vì Broker chỉ gửi một gói ack.
-  - Chiều về QoS 1 là 201 ms, gồm trễ netem cộng Nagle, vì Broker gửi liền PUBACK rồi tin ack.
-  - Chiều đi khoảng 225–242 ms: cứ 200 ms lại có một lệnh mới, trong khi lệnh trước chưa được ACK.
-- Tắt Nagle (`TCP_NODELAY`) sẽ đưa khứ hồi về gần 200 ms. Đó là đề xuất cải tiến, không thay đổi khi đang đo.
+  - Chiều về QoS 0 là 182 ms (bộ số cũ: 101 ms). Gateway không gửi PUBACK cho lệnh QoS 0, nhưng vẫn đang phát
+    telemetry QoS 1 (20 tin/s), nên tin ack thường phải chờ sau các tin telemetry chưa được ACK, giống cơ chế
+    thấy trong `data/pcap/6_N1_nodelay.pcap`. (Suy luận, chưa bắt gói riêng cho lệnh ở N1.)
+  - Chiều về QoS 1 là 260 ms (bộ số cũ: 201 ms), gồm trễ netem cộng Nagle: như ở N0, tin ack chờ trong Gateway tới khi Broker
+    ACK gói PUBACK, mà ACK này bị netem làm trễ 100 ms. (Suy từ pcap N0 và pcap telemetry ở N1, nơi
+    Gateway giữ tin đúng 100 ms; chưa bắt gói riêng cho lệnh ở N1.)
+  - Chiều đi khoảng 183–233 ms (trung vị từng lượt): cứ 200 ms lại có một lệnh mới, trong khi lệnh trước chưa
+    được ACK.
+- Tắt Nagle trên socket của Gateway (`TCP_NODELAY`) sẽ đưa khứ hồi về gần 200 ms. Đó là đề xuất cải tiến,
+  không thay đổi khi đang đo.
 
 Nhận xét N2 (mất 5 %):
 
-- Trung vị gần như N0 (2 ms với QoS 0, 43–81 ms với QoS 1), vì 95 % gói không bị ảnh hưởng.
-- Nhưng **p95 tăng lên 235–330 ms và lớn nhất 656–834 ms**: đó là các lệnh có gói bị mất, phải đợi TCP
+- Trung vị gần như N0 (16–20 ms với QoS 0, 42–44 ms với QoS 1), vì 95 % gói không bị ảnh hưởng.
+- Nhưng **p95 tăng lên 242–383 ms và lớn nhất 617–1214 ms**: đó là các lệnh có gói bị mất, phải đợi TCP
   truyền lại (thời gian chờ truyền lại tối thiểu của Linux khoảng 200 ms, gói mất nhiều lần thì chờ gấp đôi).
 
 Nhận xét N3 (trễ 100 ms + mất 5 %):
 
-- Hai hiệu ứng cộng dồn: trung vị 415–481 ms, như N1 cộng thêm phần truyền lại; p95 843–915 ms;
-  lớn nhất 1,85 s.
-- Ở N3, QoS 1 chỉ chậm hơn QoS 0 khoảng 66 ms ở trung vị, trong khi QoS 0 vẫn không mất lệnh nào. Vì thế
+- Hai hiệu ứng cộng dồn: trung vị 426–484 ms, như N1 cộng thêm phần truyền lại; p95 889–959 ms;
+  lớn nhất 1,79 s.
+- Ở N3, QoS 1 chỉ chậm hơn QoS 0 khoảng 58 ms ở trung vị, trong khi QoS 0 vẫn không mất lệnh nào. Vì thế
   với lệnh, QoS 1 **không mang lại thêm độ tin cậy** trong các điều kiện này. Nó chỉ có ích khi kết nối đứt,
   nhưng chính lúc đó lại gây ra lệnh muộn (H2, H3), và kiểm tra 2 phải chặn lại.
 
 ### H2 – Lệnh `goto` tới muộn (Gateway tắt khoảng 11 s)
 
+Trước mỗi lượt drone được đưa về điểm xuất phát (47.3977, 8.5456), cách đích `goto` (47.3980, 8.5460) khoảng 45 m.
+
 | Kiểm tra | Lượt | Lệnh bị giữ (ms) | Kết quả | Tốc độ lớn nhất sau khi bật lại |
 |---|---|---|---|---|
-| bật | 1 / 2 / 3 | 11232 / 11236 / 11130 | `rejected: expired` cả 3 lượt | 0,1 m/s, drone đứng yên |
-| tắt (`--cmd-safety off`) | 1 / 2 / 3 | 11124 / 11238 / 11129 | `accepted` cả 3 lượt | 5,0 m/s, drone bay theo lệnh cũ |
+| bật | 1 / 2 / 3 | 11954 / 11666 / 11733 | `rejected: expired` cả 3 lượt | 0,0 m/s, drone hover tại chỗ |
+| tắt (`--cmd-safety off`) | 1 / 2 / 3 | 11934 / 11940 / 11511 | `accepted` cả 3 lượt | 5,2 m/s, drone bay theo lệnh cũ |
 
 Broker giữ lệnh QoS 1 trong phiên bền của Gateway (`clean_session = false`) và giao lại ngay khi Gateway
-kết nối lại. Nếu không có kiểm tra hạn dùng, drone bay theo một lệnh đã gửi từ 11 giây trước.
+kết nối lại, lúc lệnh đã 11,5–12 s tuổi. Nếu không có kiểm tra hạn dùng, drone bay theo một lệnh đã gửi từ 12 giây
+trước. Kết quả giống bộ số cũ (nguồn giả: `accepted`, 5,0 m/s).
+
+Lần đo đầu tiên bằng PX4 (trước khi sửa) cho kết quả khác: kiểm tra tắt thì cả 3 lượt bị `rejected: out_of_range`
+và drone không bay. Lý do là **một lỗi của Gateway**: lệnh tới ngay khi Gateway vừa kết nối, trước tin vị trí đầu
+tiên từ PX4. Lệnh `goto` không ghi độ cao nên Gateway lấy độ cao hiện tại, lúc đó vẫn là giá trị khởi tạo 0, và tự
+từ chối (dưới 1 m). Drone đứng yên do tình cờ, không phải nhờ được bảo vệ. Lệnh có ghi `alt` còn nguy hiểm hơn: độ
+cao đích được tính từ độ cao so với mực nước biển, lúc đó cũng là 0. Đã sửa ở `gateway/src/px4_source.cpp`: trước
+khi thực hiện lệnh, Gateway chờ tin vị trí đầu tiên tối đa 2 s, quá 2 s thì trả `not_ready`. Sau khi sửa, drone
+giữ đúng độ cao 10 m khi bay theo lệnh `goto`.
 
 ### H3 – Broker dừng 5 s giữa chuỗi 100 lệnh QoS 1 (`docker stop` / `docker start`)
 
 | Lượt | Lệnh tới Gateway | `dup_flag = 1` | `duplicate` | `expired` (tuổi lệnh) | accepted |
 |---|---|---|---|---|---|
-| 1 | 100 | 0 | 0 | 27 (3,0–8,2 s) | 73 |
-| 2 | 100 | 0 | 0 | 27 (3,1–8,3 s) | 73 |
-| 3 | 100 | 0 | 0 | 27 (3,0–8,2 s) | 73 |
+| 1 | 101 | 1 | 0 | 36 (3,0–10,0 s) | 65 |
+| 2 | 100 | 0 | 0 | 26 (3,1–8,1 s) | 74 |
+| 3 | 101 | 1 | 0 | 35 (3,0–9,8 s) | 66 |
 
-Kết quả khác dự đoán ban đầu: **không có lệnh trùng nào**. Thay vào đó, mỗi lượt có 27 lệnh bị
-`expired`. Đó là các lệnh `commander` "gửi" trong lúc Broker tắt: Paho đệm chúng trong RAM
-(`send_while_disconnected`) rồi đẩy đi một loạt khi kết nối lại, lúc đó lệnh đã 3–8 s tuổi.
-Kiểm tra 2 chặn được hết số lệnh này. Không thấy DUP có lẽ vì `docker stop` cho Broker tắt êm, nên các
-tin đang bay đều đã có PUBACK trước khi đóng kết nối. Muốn thấy DUP cần làm đứt kết nối giữa chừng
-(ví dụ `docker kill` hoặc netem mất 100 %), và nên chạy thêm H3 với `--cmd-safety off` để làm đối chứng.
-Ở lượt 1, `commander` mất một ack (73 lệnh được Gateway chấp nhận nhưng commander chỉ đếm 72 accepted
-và 1 timeout): ack đó được gửi đúng lúc Broker tắt.
+Mỗi lượt có 26–36 lệnh bị `expired` (bộ số cũ: 27 lệnh mỗi lượt). Đó là các lệnh `commander` "gửi" trong lúc
+Broker tắt: Paho đệm chúng trong RAM (`send_while_disconnected`) rồi đẩy đi một loạt khi kết nối lại, lúc đó lệnh
+đã 3–10 s tuổi. Kiểm tra 2 chặn được hết số lệnh này.
+
+Khác bộ số cũ, lần này **có lệnh bị gửi lại với cờ DUP** ở lượt 1 và 3 (mỗi lượt một lệnh, cùng `cmd_id` tới
+Gateway hai lần, nên có 101 lệnh tới Gateway). Nhưng `duplicate` vẫn bằng 0: cả bản gốc lẫn bản gửi lại đều đã
+quá 3 s tuổi (9,8–10,0 s), nên kiểm tra 2 chặn trước khi tới kiểm tra 3 (Gateway kiểm tra theo thứ tự 1 → 4).
+Như vậy H3 cho thấy QoS 1 có gửi trùng thật, nhưng chưa thử được riêng kiểm tra 3; muốn vậy cần chạy H3 với
+`--cmd-safety off` hoặc tắt riêng kiểm tra 2. Số lệnh `accepted` phía commander khớp với Gateway (65 / 74 / 66),
+không mất ack nào.
 
 ## 5. Kết luận
 
-- Kênh lệnh qua MQTT không mất lệnh nào trong 7200 lệnh ở 4 điều kiện mạng. Khứ hồi khoảng 40 ms khi mạng
-  tốt, tới 1,85 s trong trường hợp xấu nhất (N3). Nagle làm khứ hồi tăng thêm theo độ trễ mạng. Tuy vậy, **không thể tin vào các
+- Kênh lệnh qua MQTT không mất lệnh nào trong 7200 lệnh ở 4 điều kiện mạng. Khứ hồi 10–67 ms khi mạng
+  tốt (gồm khoảng 12 ms PX4 xác nhận lệnh), tới 1,79 s trong trường hợp xấu nhất (N3). Nagle trên socket của Gateway gặp delayed ACK của Broker làm khứ hồi tăng thêm 40 ms
+  (N0) tới 100 ms (N1), đã xác nhận bằng Wireshark. Tuy vậy, **không thể tin vào các
   bảo đảm của MQTT để giữ an toàn cho lệnh**. Giữ tin (retained, phiên bền, bộ đệm offline của
   client) và giao lại (QoS 1) đều làm lệnh tới muộn hoặc tới lại.
-- Hạn dùng lệnh (kiểm tra 2) là kiểm tra có tác dụng nhất trong các thí nghiệm: nó chặn lệnh trễ 11 s ở
-  H2 và 81 lệnh bị đệm ở H3.
+- Hạn dùng lệnh (kiểm tra 2) là kiểm tra có tác dụng nhất trong các thí nghiệm: nó chặn lệnh trễ 12 s ở
+  H2 và 97 lệnh bị đệm ở H3 (gồm 2 bản gửi lại có cờ DUP).
 - Kiểm tra 2 dựa vào đồng hồ hai máy khớp nhau, nên điện thoại phải để đồng hồ tự động đồng bộ.

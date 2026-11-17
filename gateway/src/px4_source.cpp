@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <condition_variable>
 #include <iostream>
 #include <mutex>
 #include <optional>
@@ -52,6 +53,7 @@ class Px4Source : public TelemetrySource {
       snap_.rel_alt_m = p.relative_altitude_m;
       abs_alt_m_ = p.absolute_altitude_m;
       snap_.valid = true;
+      have_position_.notify_all();
     });
     telemetry_->subscribe_velocity_ned([this](Telemetry::VelocityNed v) {
       std::lock_guard<std::mutex> lk(mu_);
@@ -70,6 +72,13 @@ class Px4Source : public TelemetrySource {
   std::string execute(const DroneCommand& c) override {
     using mavsdk::Action;
     if (!action_) return "not_ready";
+    {
+      // Broker giao lệnh giữ hộ ngay khi Gateway vừa kết nối, có thể trước tin vị trí đầu tiên từ PX4.
+      // Khi đó độ cao vẫn là 0 và goto sẽ tính sai độ cao đích, nên chờ tin vị trí (5 lần/giây) tối đa 2 s.
+      std::unique_lock<std::mutex> lk(mu_);
+      if (!have_position_.wait_for(lk, std::chrono::seconds(2), [this] { return snap_.valid; }))
+        return "not_ready";
+    }
     Action::Result r = Action::Result::Unknown;
     if (c.action == "takeoff") {
       const float a = std::isnan(c.alt) ? 10.0f : static_cast<float>(c.alt);
@@ -116,6 +125,7 @@ class Px4Source : public TelemetrySource {
   std::optional<mavsdk::Action> action_;
   double abs_alt_m_ = 0;  // độ cao AMSL, cho lệnh goto
   std::mutex mu_;
+  std::condition_variable have_position_;  // báo khi có tin vị trí (snap_.valid)
   TelemetrySnapshot snap_;
 };
 

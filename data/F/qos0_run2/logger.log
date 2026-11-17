@@ -3,20 +3,20 @@ Logger qos=0 scenario=F-qos0 run=2 -> data/F/qos0_run2/logger.csv
 [logger-01] connected: connect onSuccess called
 status: {"drone_id":"001","state":"offline"} (retained)
 status: {"drone_id":"001","state":"online"}
-da nhan 44 tin (+8/s)
-da nhan 144 tin (+20/s)
-da nhan 244 tin (+20/s)
-da nhan 344 tin (+20/s)
-da nhan 444 tin (+20/s)
-da nhan 544 tin (+20/s)
-da nhan 644 tin (+20/s)
-da nhan 744 tin (+20/s)
-da nhan 840 tin (+19/s)
-da nhan 944 tin (+20/s)
-da nhan 1044 tin (+20/s)
-da nhan 1144 tin (+20/s)
+da nhan 36 tin (+7/s)
+da nhan 136 tin (+20/s)
+da nhan 236 tin (+20/s)
+da nhan 336 tin (+20/s)
+da nhan 436 tin (+20/s)
+da nhan 536 tin (+20/s)
+da nhan 636 tin (+20/s)
+da nhan 736 tin (+20/s)
+da nhan 836 tin (+20/s)
+da nhan 936 tin (+20/s)
+da nhan 1036 tin (+20/s)
+da nhan 1136 tin (+20/s)
 [logger-01] disconnected
-Dung. Tong cong 1200 tin, 0 tin sai dinh dang.
+Dung. Tong cong 1196 tin, 0 tin sai dinh dang.
 Logger qos=0 scenario=F-qos0 run=2 -> data/F/qos0_run2/logger.csv
 [logger-01] connect_attempt: tcp://172.28.0.10:1883
 [logger-01] connected: connect onSuccess called
@@ -41,10 +41,10 @@ da nhan 1700 tin (+20/s)
 da nhan 1800 tin (+20/s)
 da nhan 1900 tin (+20/s)
 da nhan 2000 tin (+20/s)
-da nhan 2100 tin (+20/s)
 status: {"drone_id":"001","state":"offline"}
-da nhan 2100 tin (+0/s)
-da nhan 2100 tin (+0/s)
-da nhan 2100 tin (+0/s)
+da nhan 2076 tin (+15/s)
+da nhan 2076 tin (+0/s)
+da nhan 2076 tin (+0/s)
+da nhan 2076 tin (+0/s)
 [logger-01] disconnected
-Dung. Tong cong 2100 tin, 0 tin sai dinh dang.
+Dung. Tong cong 2076 tin, 0 tin sai dinh dang.

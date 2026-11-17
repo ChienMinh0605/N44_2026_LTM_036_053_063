@@ -1,4 +1,9 @@
-Gateway boot_id=1794718132791 source=fake qos=1 buffer=on cmd-safety=on scenario=N0 run=2 -> /mnt/work/Work/Projects/Network(C++)/Project_Cuoi_Ki/px4-mqtt/data/E/N0_qos1_run2
+[34m[08:15:25|Info ] [0mMAVSDK version: v3.17.5 (mavsdk_impl.cpp:35)
+Dang cho PX4 tren udpin://0.0.0.0:14540[34m[08:15:25|Info ] [0mNew system on: 127.0.0.1:14580 (system ID: 1) (udp_connection.cpp:263)
+ ...
+[32m[08:15:25|Debug] [0mComponent Autopilot (component ID: 1) added. (system_impl.cpp:508)
+[32m[08:15:25|Debug] [0mDiscovered 1 component (system_impl.cpp:628)
+Gateway boot_id=1794921325430 qos=1 buffer=on cmd-safety=on scenario=N0 run=2 -> /mnt/work/Work/Projects/Network(C++)/Project_Cuoi_Ki/px4-mqtt-wt/data/E/N0_qos1_run2
 [gateway-01] connect_attempt: tcp://172.28.0.10:1883
 [gateway-01] connected: connect onSuccess called
 sent=104 buffered=0 dropped=0
@@ -38,4 +43,4 @@ sent=3404 buffered=0 dropped=0
 sent=3504 buffered=0 dropped=0
 Dang dung Gateway...
 [gateway-01] disconnected
-Tong: sent=3600 buffered=0 dropped=0
+Tong: sent=3596 buffered=0 dropped=0

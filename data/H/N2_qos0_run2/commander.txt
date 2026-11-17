@@ -1,1 +1,1 @@
-Tong: gui 300 lenh | accepted=300 | khu hoi trung vi 2 ms, p95 313 ms
+Tong: gui 300 lenh | accepted=300 | khu hoi trung vi 16 ms, p95 232 ms

@@ -1,43 +1,48 @@
-Gateway boot_id=1794712774829 source=fake qos=1 buffer=on cmd-safety=on scenario=C-buffer-on run=1 -> data/C/buffer-on_run1
+[34m[09:43:30|Info ] [0mMAVSDK version: v3.17.5 (mavsdk_impl.cpp:35)
+Dang cho PX4 tren [34m[09:43:30|Info ] [0mNew system on: 127.0.0.1:14580 (system ID: 1) (udp_connection.cpp:263)
+udpin://0.0.0.0:14540 ...
+[32m[09:43:30|Debug] [0mComponent Autopilot (component ID: 1) added. (system_impl.cpp:508)
+[32m[09:43:31|Debug] [0mDiscovered 1 component (system_impl.cpp:628)
+Gateway boot_id=1794926610040 qos=1 buffer=on cmd-safety=on scenario=C-buffer-on run=1 -> data/C/buffer-on_run1
 [gateway-01] connect_attempt: tcp://172.28.0.10:1883
 [gateway-01] connected: connect onSuccess called
-sent=104 buffered=0 dropped=0
-sent=204 buffered=0 dropped=0
-sent=304 buffered=0 dropped=0
-sent=404 buffered=0 dropped=0
-sent=504 buffered=0 dropped=0
-sent=604 buffered=0 dropped=0
-sent=704 buffered=0 dropped=0
-sent=804 buffered=0 dropped=0
-sent=904 buffered=0 dropped=0
-sent=1004 buffered=0 dropped=0
-sent=1104 buffered=0 dropped=0
-sent=1204 buffered=0 dropped=0
+sent=100 buffered=0 dropped=0
+sent=200 buffered=0 dropped=0
+sent=300 buffered=0 dropped=0
+sent=400 buffered=0 dropped=0
+sent=500 buffered=0 dropped=0
+sent=600 buffered=0 dropped=0
+sent=700 buffered=0 dropped=0
+sent=800 buffered=0 dropped=0
+sent=900 buffered=0 dropped=0
+sent=1000 buffered=0 dropped=0
+sent=1100 buffered=0 dropped=0
 [gateway-01] connection_lost
-sent=1204 buffered=100 dropped=0  (MAT KET NOI)
-sent=1204 buffered=200 dropped=0  (MAT KET NOI)
-sent=1204 buffered=300 dropped=0  (MAT KET NOI)
+sent=1172 buffered=28 dropped=0  (MAT KET NOI)
+sent=1172 buffered=128 dropped=0  (MAT KET NOI)
+sent=1172 buffered=228 dropped=0  (MAT KET NOI)
+sent=1172 buffered=328 dropped=0  (MAT KET NOI)
 [gateway-01] connected: automatic reconnect
-sent=1208 buffered=396 dropped=0
-sent=1308 buffered=396 dropped=0
-sent=1408 buffered=396 dropped=0
-sent=1508 buffered=396 dropped=0
-sent=1608 buffered=396 dropped=0
-sent=1708 buffered=396 dropped=0
-sent=1808 buffered=396 dropped=0
-sent=1908 buffered=396 dropped=0
-sent=2008 buffered=396 dropped=0
-sent=2108 buffered=396 dropped=0
-sent=2208 buffered=396 dropped=0
-sent=2308 buffered=396 dropped=0
-sent=2408 buffered=396 dropped=0
-sent=2508 buffered=396 dropped=0
-sent=2608 buffered=396 dropped=0
-sent=2708 buffered=396 dropped=0
-sent=2808 buffered=396 dropped=0
-sent=2908 buffered=396 dropped=0
-sent=3008 buffered=396 dropped=0
-sent=3108 buffered=396 dropped=0
+sent=1232 buffered=368 dropped=0
+sent=1332 buffered=368 dropped=0
+sent=1432 buffered=368 dropped=0
+sent=1532 buffered=368 dropped=0
+sent=1632 buffered=368 dropped=0
+sent=1732 buffered=368 dropped=0
+sent=1832 buffered=368 dropped=0
+sent=1932 buffered=368 dropped=0
+sent=2032 buffered=368 dropped=0
+sent=2132 buffered=368 dropped=0
+sent=2232 buffered=368 dropped=0
+sent=2332 buffered=368 dropped=0
+sent=2432 buffered=368 dropped=0
+sent=2532 buffered=368 dropped=0
+sent=2632 buffered=368 dropped=0
+sent=2732 buffered=368 dropped=0
+sent=2832 buffered=368 dropped=0
+sent=2932 buffered=368 dropped=0
+sent=3032 buffered=368 dropped=0
+sent=3132 buffered=368 dropped=0
 Dang dung Gateway...
 [gateway-01] disconnected
-Tong: sent=3196 buffered=396 dropped=0
+Tong: sent=3224 buffered=368 dropped=0
