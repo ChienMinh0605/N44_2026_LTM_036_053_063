@@ -224,7 +224,7 @@ docs/        kế hoạch, báo cáo từng thí nghiệm, giao thức kênh l�
 | Phần | Phụ trách |
 |---|---|
 | `common/`, `logger/`, phần MQTT của `gateway/`, `mosquitto/`, Broker và netem | Chiến |
-| Phần PX4 (MAVSDK) của `gateway/` | Người có máy chạy PX4 |
+| Phần PX4 (MAVSDK) của `gateway/` | Nhật |
 | `app/`, kênh lệnh trên App | Tiên |
 | Trình chạy thí nghiệm, phân tích, `data/` | Nhật |
 
