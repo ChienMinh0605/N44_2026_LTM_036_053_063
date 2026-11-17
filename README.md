@@ -217,7 +217,6 @@ docs/        kế hoạch, báo cáo từng thí nghiệm, giao thức kênh l�
 - Kiểm tra 3 (lệnh trùng) chưa được thử riêng: ở H3 bản gửi lại có cờ DUP tới khi đã quá hạn, nên kiểm tra 2 chặn trước.
 - Ở C, Gateway kết nối lại sau 18 s hoặc 27 s (Broker tắt 15 s). `strace` cho thấy mỗi lần thử lúc Broker tắt treo
   3,1 s (`EHOSTUNREACH`), nhưng chưa giải thích được vì sao lịch thử khác nhau giữa các lượt.
-- Ảnh A, B, D và ảnh App ở `data/H/app` chụp trước khi bỏ nguồn dữ liệu giả, chưa chụp lại với PX4.
 
 ## Nhóm và quy tắc làm việc
 
