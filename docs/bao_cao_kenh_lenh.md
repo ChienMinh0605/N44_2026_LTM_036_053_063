@@ -80,7 +80,7 @@ x500); trước mỗi lượt `scripts/hover.sh` bảo đảm drone đang hover 
 
 "Đi" = commander → Gateway (`gw_recv_ms − sent_ms`), "về" = Gateway → commander (lúc nhận ack − `ack_ms`). Phần
 còn lại của khứ hồi là **thời gian Gateway thực hiện lệnh**: MAVSDK gửi lệnh `hold` tới PX4 và chờ PX4 xác nhận,
-trung vị 10–16 ms ở mọi lượt. Bộ số cũ (nguồn giả) không có phần này, nên khứ hồi N0 QoS 0 tăng từ 2 lên 15 ms.
+trung vị 10–16 ms ở mọi lượt. Bộ số cũ không có phần này, nên khứ hồi N0 QoS 0 tăng từ 2 lên 15 ms.
 
 So với bộ số cũ: trung vị N0 QoS 0 tăng 2 → 15 ms, N1 tăng 346/449 → 378/457 ms, N2 QoS 1 giảm 80 → 43 ms,
 N3 tăng 415/481 → 426/484 ms; p95 N3 tăng 843/915 → 889/959 ms; lệnh chậm nhất giảm 1,85 → 1,79 s.
@@ -168,7 +168,7 @@ Trước mỗi lượt drone được đưa về điểm xuất phát (47.3977, 
 
 Broker giữ lệnh QoS 1 trong phiên bền của Gateway (`clean_session = false`) và giao lại ngay khi Gateway
 kết nối lại, lúc lệnh đã 11,5–12 s tuổi. Nếu không có kiểm tra hạn dùng, drone bay theo một lệnh đã gửi từ 12 giây
-trước. Kết quả giống bộ số cũ (nguồn giả: `accepted`, 5,0 m/s).
+trước. Kết quả giống bộ số cũ (`accepted`, 5,0 m/s).
 
 Lần đo đầu tiên bằng PX4 (trước khi sửa) cho kết quả khác: kiểm tra tắt thì cả 3 lượt bị `rejected: out_of_range`
 và drone không bay. Lý do là **một lỗi của Gateway**: lệnh tới ngay khi Gateway vừa kết nối, trước tin vị trí đầu
