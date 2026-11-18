@@ -76,8 +76,8 @@ PUBACK cho lệnh, Broker trì hoãn ACK gói đó 40 ms (delayed ACK), và Nagl
 ## Kết luận
 
 - **Khi kết nối TCP còn sống, không mất tin nào, kể cả QoS 0.** TCP truyền lại đoạn bị mất, nên mạng xấu chỉ biến
-  thành độ trễ (p95 khoảng 0,55 s ở N3). QoS 1 không cải thiện tỷ lệ nhận; chênh lệch trễ giữa QoS 0 và QoS 1
-  đổi chiều giữa N1 và N3, nên đó là ảnh hưởng của Nagle chứ không phải của QoS.
+  thành độ trễ (p95 khoảng 0,55 s ở N3). QoS 1 không cải thiện tỷ lệ nhận. Chênh lệch trễ giữa QoS 0 và QoS 1
+  ở N1 biến mất khi tắt Nagle trên Broker (trung vị 102 và 103 ms), nên chênh lệch đó do Nagle chứ không do QoS.
 - **Khi mất hẳn kết nối, mỗi loại sự cố cần đúng cơ chế của nó:** Broker hỏng cần bộ đệm ở Gateway; bên nhận tạm
   vắng cần QoS 1 cùng phiên bền; Gateway chết cần Last Will cùng tin trạng thái retained.
 - **Phần trễ thêm ngoài netem là Nagle gặp delayed ACK, ở cả hai phía.** Bật `set_tcp_nodelay true` trên Broker
